@@ -69,18 +69,59 @@ ExceptionHandler (ExceptionType which)
 {
     int type = machine->ReadRegister (2);
 
-    if ((which == SyscallException) && (type == SC_Halt))
-      {
-	  DEBUG ('a', "Shutdown, initiated by user program.\n");
-	  interrupt->Halt ();
-      }
-    else
-      {
-	  printf ("Unexpected user mode exception %d %d\n", which, type);
-	  ASSERT (FALSE);
-      }
-
-    // LB: Do not forget to increment the pc before returning!
-    UpdatePC ();
-    // End of addition
+    if (which == SyscallException) {
+        switch (type) {
+            case SC_Halt: {
+                DEBUG('a', "Shutdown, initiated by user program.\n");
+                interrupt->Halt();
+                break;
+            }
+            case SC_PutChar: {
+                char c = (char) machine->ReadRegister(4);
+                synchconsole->SynchPutChar(c);
+                break;
+            }
+            default: {
+                printf("Unexpected user mode exception %d %d\n", which, type);
+                ASSERT(FALSE);
+            }
+        }
+        // LB: Do not forget to increment the pc before returning!
+        UpdatePC ();
+        // End of addition
+    }
 }
+
+//----------------------------------------------------------------------
+//copyStringFromMachine
+// copie une chaîne du monde MIPS vers le monde Linux. 
+// Au plus size caractères sont copiés. 
+// Un ’\ 0’ est forcé à la fin de la copie en dernière position 
+// pour garantir la sécurité du système.
+//----------------------------------------------------------------------
+
+void copyStringFromMachine(int from, char *to, unsigned size) {
+
+    //char * p = malloc(sizeof(void*));
+    unsigned    int i;
+    
+    char * p = (char *)from;
+    /* ou :
+        p = (char *)machine->ReadRegister(from);;
+    */
+    
+    unsigned int sizeOfP = sizeof(p);
+    if (sizeOfP < size) {
+        size = sizeOfP;
+    }
+
+    for(i=0; i<size; i++){
+        to[i] = p[i];
+    }
+    
+    to[i] = '\0';
+}
+
+
+
+
