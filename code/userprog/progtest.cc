@@ -113,11 +113,10 @@ ConsoleTest (char *in, char *out)
 void SynchConsoleTest (char *in, char *out) {
       char *ch = (char*) malloc(10);
       synchconsole = new SynchConsole(in, out);
-      //while (1){
+      while (1){
         synchconsole->SynchGetString(ch, 10);
         synchconsole->SynchPutString(ch);
-
-      //}
+      }
       fprintf(stderr, "Solaris: EOF detected in SynchConsole!\n");
 }
 

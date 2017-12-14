@@ -10,16 +10,11 @@ static Semaphore *writeDone;
 static void ReadAvail(int arg) { readAvail->V(); }
 static void WriteDone(int arg) { writeDone->V(); }
 
-char* buffer;
-int positionBuffer;
-
 SynchConsole::SynchConsole(char *readFile, char *writeFile) {
 
     readAvail = new Semaphore("read avail", 0);
     writeDone = new Semaphore("write done", 0);
     console = new Console(readFile, writeFile, ReadAvail, WriteDone, 0);
-    buffer = (char*)malloc(MAX_STRING_SIZE);
-    positionBuffer = 0;
 }
 
 
@@ -39,57 +34,24 @@ void SynchConsole::SynchPutChar(const char ch) {
 char SynchConsole::SynchGetChar() {
 
     readAvail->P();	// wait for character to arrive
-    char c = console->GetChar();
-    //if(c == EOF)
-        //printf(" c2zdqqzdzqd:  %c\n",c);
-    return c;
+    return console->GetChar();
     
 
-}
-
-void SynchConsole::vider(char* buff, int size){
-    for(int i = 0; i<size; i++)
-        buff[i] = '\0';
-}
-
-void SynchConsole::ecrire(char* buff, int size){
-    for(int j = 0; j<size && buff[j]!='\0'; j++)
-        SynchPutChar(buff[j]);
-    vider(buff, size);
-    positionBuffer = 0;
 }
 
 void SynchConsole::SynchPutString(const char s[]) {
-    int i = 0;
-    
-    while(s[i] != '\0') {
-        // Buffer plein, on l'ecrit et on le vide
-        if (positionBuffer == MAX_STRING_SIZE) {
-            ecrire(buffer, MAX_STRING_SIZE);
-        }
-        // Ajout du s dans le buffer lettre par lettre
-        buffer[positionBuffer] = s[i];
-        positionBuffer++;
-        i++;
-    }
-    // Ecriture termine, on ecrit et on vide le buffer
-    ecrire(buffer, MAX_STRING_SIZE);
-    printf("\n put = %s\n",s);
+    printf(" put :  %s\n",s);
+    for(unsigned int i=0; i<strlen(s); i++)
+        SynchPutChar(s[i]);
 }
 
 
 void SynchConsole::SynchGetString(char *s, int n) {
+    int i;
+    for(i = 0; i<n; i++) 
+        s[i] = SynchGetChar();
     
-
-    int i;char  c;
-    
-    for(i = 0; i<n; i++) {
-        c = SynchGetChar();
-            printf(" c :  %c\n",c);
-        s[i] = c;
-    }
-
-   // s[i] = '\0';
+    s[i] = '\0';
     
     printf(" get :  %s\n",s);
     

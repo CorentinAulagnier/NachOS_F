@@ -64,33 +64,13 @@ UpdatePC ()
 //      are in machine.h.
 //----------------------------------------------------------------------
 
-void
-ExceptionHandler (ExceptionType which)
-{
-    int type = machine->ReadRegister (2);
-
-    if (which == SyscallException) {
-        switch (type) {
-            case SC_Halt: {
-                DEBUG('a', "Shutdown, initiated by user program.\n");
-                interrupt->Halt();
-                break;
-            }
-            case SC_PutChar: {
-                char c = (char) machine->ReadRegister(4);
-                synchconsole->SynchPutChar(c);
-                break;
-            }
-            default: {
-                printf("Unexpected user mode exception %d %d\n", which, type);
-                ASSERT(FALSE);
-            }
-        }
-        // LB: Do not forget to increment the pc before returning!
-        UpdatePC ();
-        // End of addition
-    }
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
+void vider(char* buff, int size){
+    for(int i = 0; i<size; i++)
+        buff[i] = '\0';
 }
+
 
 //----------------------------------------------------------------------
 //copyStringFromMachine
@@ -120,7 +100,67 @@ void copyStringFromMachine(int from, char *to, unsigned size) {
     }
     
     to[i] = '\0';
+    printf("Decode : %s\n", to);
 }
+
+//----------------------------------------------------------------------
+
+
+
+void
+ExceptionHandler (ExceptionType which)
+{
+    int type = machine->ReadRegister (2);
+
+    if (which == SyscallException) {
+        switch (type) {
+            case SC_Halt: {
+                DEBUG('a', "Shutdown, initiated by user program.\n");
+                interrupt->Halt();
+                break;
+            }
+            case SC_PutChar: {
+                char c = (char) machine->ReadRegister(4);
+                synchconsole->SynchPutChar(c);
+                break;
+            }
+            case SC_PutString: {
+                char* buffer = (char*)malloc(MAX_STRING_SIZE);
+                int positionBuffer = 0;
+                int add = (int) machine->ReadRegister(4);
+                char * word = (char*)malloc(sizeof(add));
+                copyStringFromMachine(add, word, 20);
+
+                unsigned int i = 0;
+                while(word[i] != '\0') {
+                    // Buffer plein, on l'ecrit et on le vide
+                    if (positionBuffer == MAX_STRING_SIZE) {
+                        synchconsole->SynchPutString(buffer);
+                        vider(buffer, MAX_STRING_SIZE);
+                        positionBuffer = 0;
+                    }
+                    // Ajout du s dans le buffer lettre par lettre
+                    buffer[positionBuffer] = word[i];
+                    positionBuffer++;
+                    i++;
+                }
+                // Ecriture termine, on ecrit et on vide le buffer
+                synchconsole->SynchPutString(buffer);
+                vider(buffer, MAX_STRING_SIZE);
+                positionBuffer = 0;
+                break;
+            }
+            default: {
+                printf("Unexpected user mode exception %d %d\n", which, type);
+                ASSERT(FALSE);
+            }
+        }
+        // LB: Do not forget to increment the pc before returning!
+        UpdatePC ();
+        // End of addition
+    }
+}
+
 
 
 
