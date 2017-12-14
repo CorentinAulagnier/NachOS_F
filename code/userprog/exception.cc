@@ -153,8 +153,31 @@ ExceptionHandler (ExceptionType which)
                 synchconsole->SynchPutString(buffer);
                 vider(buffer, chercherTaille(buffer, 0));
                 positionBuffer = 0;
-                
                 free(buffer);
+                break;
+            } case SC_GetChar: {
+                printf("SC_GetChar\n");
+                char c = synchconsole->SynchGetChar();
+                machine->WriteRegister(2, c);
+                break;
+            } case SC_GetString: {
+                printf("SC_GetString\n");
+                char * c = (char *)malloc(MAX_BUFFER_SIZE);
+                synchconsole->SynchGetString(c, MAX_BUFFER_SIZE);
+                machine->WriteRegister(2, c);
+                //                machine->WriteRegister(int, int);
+                break;
+            } case SC_GetInt: {
+                printf("SC_GetInt\n");
+                int n = 0;
+                synchconsole->SynchGetInt(&n);
+                printf("val n : %d\n",n);
+                machine->WriteRegister(2, n);
+                break;
+            } case SC_PutInt: {
+                printf("SC_PutInt\n");
+                int n = machine->ReadRegister(4);
+                synchconsole->SynchPutInt(n);
                 break;
             }
             default: {
