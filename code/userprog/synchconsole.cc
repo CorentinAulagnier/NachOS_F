@@ -39,13 +39,24 @@ void SynchConsole::SynchPutChar(const char ch) {
 char SynchConsole::SynchGetChar() {
 
     readAvail->P();	// wait for character to arrive
-    return console->GetChar();
+    char c = console->GetChar();
+    //if(c == EOF)
+        //printf(" c2zdqqzdzqd:  %c\n",c);
+    return c;
+    
 
 }
 
-void vider(char* buff, int size){
+void SynchConsole::vider(char* buff, int size){
     for(int i = 0; i<size; i++)
         buff[i] = '\0';
+}
+
+void SynchConsole::ecrire(char* buff, int size){
+    for(int j = 0; j<size && buff[j]!='\0'; j++)
+        SynchPutChar(buff[j]);
+    vider(buff, size);
+    positionBuffer = 0;
 }
 
 void SynchConsole::SynchPutString(const char s[]) {
@@ -54,35 +65,32 @@ void SynchConsole::SynchPutString(const char s[]) {
     while(s[i] != '\0') {
         // Buffer plein, on l'ecrit et on le vide
         if (positionBuffer == MAX_STRING_SIZE) {
-            for(int j = 0; j<MAX_STRING_SIZE && buffer[j]!='\0'; j++)
-                SynchPutChar(buffer[j]);
-            vider(buffer, MAX_STRING_SIZE);
-            positionBuffer = 0;
+            ecrire(buffer, MAX_STRING_SIZE);
         }
         // Ajout du s dans le buffer lettre par lettre
         buffer[positionBuffer] = s[i];
         positionBuffer++;
         i++;
     }
-
     // Ecriture termine, on ecrit et on vide le buffer
-    for(int j = 0; j<MAX_STRING_SIZE && buffer[j]!='\0'; j++)
-        SynchPutChar(buffer[j]);
-
-    vider(buffer, MAX_STRING_SIZE);
-
+    ecrire(buffer, MAX_STRING_SIZE);
+    printf("\n put = %s\n",s);
 }
 
 
 void SynchConsole::SynchGetString(char *s, int n) {
     
-    char* word = (char*)malloc(n+1);
-    int i;
-    
-    for(i = 0; i<n; i++)
-        word[i] = SynchGetChar();
 
-    word[i] = '\0';
+    int i;char  c;
     
-    s = word;
+    for(i = 0; i<n; i++) {
+        c = SynchGetChar();
+            printf(" c :  %c\n",c);
+        s[i] = c;
+    }
+
+   // s[i] = '\0';
+    
+    printf(" get :  %s\n",s);
+    
 }
