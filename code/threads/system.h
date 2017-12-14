@@ -17,6 +17,7 @@
 #include "timer.h"
 
 #define MAX_STRING_SIZE 5
+#define MAX_BUFFER_SIZE 50
 
 // Initialization and cleanup routines
 extern void Initialize (int argc, char **argv);	// Initialization,

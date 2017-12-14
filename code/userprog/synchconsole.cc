@@ -55,3 +55,19 @@ void SynchConsole::SynchGetString(char *s, int n) {
     
     s[i] = '\0';
 }
+
+void SynchConsole::SynchPutInt(int n){
+
+      char * buff = (char*)malloc(sizeof(int));
+      snprintf(buff, sizeof(int), "%d", n);
+      SynchPutString(buff);
+
+}
+
+void SynchConsole::SynchGetInt(int *n){
+
+      char * buff = (char*)malloc(sizeof(int));
+      SynchGetString(buff, 1);
+      sscanf(buff, "%d", n);
+
+}

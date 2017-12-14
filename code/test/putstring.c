@@ -9,5 +9,6 @@ int main() {
     print("abc");
     print("defgh");
     print("coucoucoucou");
-    Halt();
+    //Halt();
+    return 0;
 }
