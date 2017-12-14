@@ -134,6 +134,10 @@ void Yield ();
  */
 void PutChar(char c);
 
+/* PutString write s on ConsoleOutput. 
+ */
+void PutString(char* s);
+
 #endif // IN_USER_MODE
 
 #endif /* SYSCALL_H */

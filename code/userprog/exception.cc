@@ -40,6 +40,46 @@ UpdatePC ()
     machine->WriteRegister (NextPCReg, pc);
 }
 
+//----------------------------------------------------------------------
+//vider
+// remplit les size premiers caracteres de buff avec un '\0'
+//----------------------------------------------------------------------
+void vider(char* buff, int size){
+    for(int i = 0; i<size; i++)
+        buff[i] = '\0';
+}
+
+
+//----------------------------------------------------------------------
+//copyStringFromMachine
+// copie une chaîne du monde MIPS vers le monde Linux. 
+// Au plus size caractères sont copiés. 
+// Un ’\ 0’ est forcé à la fin de la copie en dernière position 
+// pour garantir la sécurité du système.
+//----------------------------------------------------------------------
+
+void copyStringFromMachine(int from, char *to, unsigned size) {
+    char *p = machine->mainMemory;
+    unsigned int i;
+    for(i=0; i<size; i++){
+        to[i] = p[from+i];
+    }
+    to[i] = '\0';
+}
+
+//----------------------------------------------------------------------
+//chercherTaille
+// fonction comparable a strlen() sur le char * p a partir du char add
+//----------------------------------------------------------------------
+
+int chercherTaille(char * p, int add){
+    int i = 0;
+    while(p[add+i] != '\0'){
+        i++;
+    }
+    return i;
+}
+
 
 //----------------------------------------------------------------------
 // ExceptionHandler
@@ -64,49 +104,6 @@ UpdatePC ()
 //      are in machine.h.
 //----------------------------------------------------------------------
 
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-void vider(char* buff, int size){
-    for(int i = 0; i<size; i++)
-        buff[i] = '\0';
-}
-
-
-//----------------------------------------------------------------------
-//copyStringFromMachine
-// copie une chaîne du monde MIPS vers le monde Linux. 
-// Au plus size caractères sont copiés. 
-// Un ’\ 0’ est forcé à la fin de la copie en dernière position 
-// pour garantir la sécurité du système.
-//----------------------------------------------------------------------
-
-void copyStringFromMachine(int from, char *to, unsigned size) {
-
-    //char * p = malloc(sizeof(void*));
-    unsigned    int i;
-    
-    char * p = (char *)from;
-    /* ou :
-        p = (char *)machine->ReadRegister(from);;
-    */
-    
-    unsigned int sizeOfP = sizeof(p);
-    if (sizeOfP < size) {
-        size = sizeOfP;
-    }
-
-    for(i=0; i<size; i++){
-        to[i] = p[i];
-    }
-    
-    to[i] = '\0';
-    printf("Decode : %s\n", to);
-}
-
-//----------------------------------------------------------------------
-
-
-
 void
 ExceptionHandler (ExceptionType which)
 {
@@ -120,16 +117,24 @@ ExceptionHandler (ExceptionType which)
                 break;
             }
             case SC_PutChar: {
+                //printf("SC_PutChar\n");
                 char c = (char) machine->ReadRegister(4);
                 synchconsole->SynchPutChar(c);
                 break;
             }
             case SC_PutString: {
+                //printf("SC_PutString\n");
+                int add = (int) machine->ReadRegister(4); // @ de la chaine
+                
                 char* buffer = (char*)malloc(MAX_STRING_SIZE);
                 int positionBuffer = 0;
-                int add = (int) machine->ReadRegister(4);
-                char * word = (char*)malloc(sizeof(add));
-                copyStringFromMachine(add, word, 20);
+                
+                char * s = machine->mainMemory;
+                int taille = chercherTaille(s, add);
+
+                char *word = (char*) malloc(taille); 
+                vider(buffer, taille);
+                copyStringFromMachine(add, word, taille);
 
                 unsigned int i = 0;
                 while(word[i] != '\0') {
@@ -146,8 +151,10 @@ ExceptionHandler (ExceptionType which)
                 }
                 // Ecriture termine, on ecrit et on vide le buffer
                 synchconsole->SynchPutString(buffer);
-                vider(buffer, MAX_STRING_SIZE);
+                vider(buffer, chercherTaille(buffer, 0));
                 positionBuffer = 0;
+                
+                free(buffer);
                 break;
             }
             default: {

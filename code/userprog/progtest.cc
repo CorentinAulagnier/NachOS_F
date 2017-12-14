@@ -112,6 +112,7 @@ ConsoleTest (char *in, char *out)
 
 void SynchConsoleTest (char *in, char *out) {
       char *ch = (char*) malloc(10);
+      delete synchconsole;
       synchconsole = new SynchConsole(in, out);
       while (1){
         synchconsole->SynchGetString(ch, 10);

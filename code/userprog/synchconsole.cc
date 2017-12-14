@@ -40,19 +40,18 @@ char SynchConsole::SynchGetChar() {
 }
 
 void SynchConsole::SynchPutString(const char s[]) {
-    printf(" put :  %s\n",s);
+    //printf(" put : '%s'\n",s);
     for(unsigned int i=0; i<strlen(s); i++)
         SynchPutChar(s[i]);
+
 }
 
 
 void SynchConsole::SynchGetString(char *s, int n) {
     int i;
     for(i = 0; i<n; i++) 
+
         s[i] = SynchGetChar();
     
     s[i] = '\0';
-    
-    printf(" get :  %s\n",s);
-    
 }
