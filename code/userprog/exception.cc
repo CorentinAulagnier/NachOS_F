@@ -179,6 +179,16 @@ ExceptionHandler (ExceptionType which)
                 int n = machine->ReadRegister(4);
                 synchconsole->SynchPutInt(n);
                 break;
+            } case SC_UserThreadCreate: {
+                printf("SC_UserThreadCreate\n");
+                //int func = (int)machine->ReadRegister(4); // @ de la fonction
+                //int add = (int)machine->ReadRegister(5); // @ espace mem
+                //do_UserThreadCreate(func, add);
+                break;
+            } case SC_UserThreadExit: {
+                printf("SC_UserThreadExit\n");
+                //do_UserThreadExit;
+                break;
             }
             default: {
                 printf("Unexpected user mode exception %d %d\n", which, type);
