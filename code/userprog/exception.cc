@@ -196,18 +196,34 @@ ExceptionHandler (ExceptionType which)
                 break;
             } case SC_UserThreadCreate: {
                 printf("SC_UserThreadCreate\n");
-                //int func = (int)machine->ReadRegister(4); // @ de la fonction
-                //int add = (int)machine->ReadRegister(5); // @ espace mem
-                //do_UserThreadCreate(func, add);
+                
+                int func = (int)machine->ReadRegister(4); // @ de la fonction
+                int add = (int)machine->ReadRegister(5); // @ espace mem
+                printf("func = '%d', add = '%d'\n", func, add);
+                machine->WriteRegister(2, 0);
+                add = (int)machine->ReadRegister(2); // @ espace mem
+                printf("r2 = '%d'\n", add);
+                /*
+                int retour = do_UserThreadCreate(func, add);
+                machine->WriteRegister(2, retour);
+                */
                 break;
-            } case SC_StartUserThread: {
+            }/* case SC_StartUserThread: {
                 printf("SC_StartUserThread\n");
-                //int func = (int)machine->ReadRegister(4); // @ de la fonction
+                int func = (int)machine->ReadRegister(4); // @ de la fonction
+                printf("func = '%d'\n", func);
+                
                 //do_UserThreadCreate(func, add);
+               // semaphoreThread->post();
+                printf("POST\n");
                 break;
-            } case SC_UserThreadExit: {
+            }*/ case SC_UserThreadExit: {
                 printf("SC_UserThreadExit\n");
-                //do_UserThreadExit;
+              //  semaphoreThread->wait();
+                printf("POST\n");
+                /*
+                do_UserThreadExit();
+                */
                 break;
             }
             default: {

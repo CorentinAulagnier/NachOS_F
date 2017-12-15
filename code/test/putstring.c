@@ -3,7 +3,7 @@
 void test() {
 
     PutString("Quelle taille voulez-vous lire ?\n"); 
-    
+
     int taille = 5;
     PutInt(taille);
     PutChar('\n');

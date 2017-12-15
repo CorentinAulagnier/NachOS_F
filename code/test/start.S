@@ -184,15 +184,7 @@ UserThreadCreate:
 	syscall
 	j	$31
 	.end UserThreadCreate
-	
-    .globl StartUserThread
-	.ent	StartUserThread
-StartUserThread:
-	addiu $2,$0,SC_StartUserThread
-	syscall
-	j	$31
-	.end StartUserThread
-	
+
     .globl UserThreadExit
 	.ent	UserThreadExit
 UserThreadExit:
