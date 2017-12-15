@@ -68,6 +68,23 @@ void copyStringFromMachine(int from, char *to, unsigned size) {
 }
 
 //----------------------------------------------------------------------
+// writeStringToMachine
+// copie une chaîne du monde Linux vers le monde MIPS. 
+// Au plus size caractères sont copiés. 
+// Un ’\ 0’ est forcé à la fin de la copie en dernière position 
+// pour garantir la sécurité du système.
+//----------------------------------------------------------------------
+
+void writeStringToMachine(char * from, int to, unsigned size) {
+    unsigned int i;
+    char *p = machine->mainMemory;
+    for(i=0; i<size; i++){
+        p[to+i] = from[i];
+    }
+    p[to+i] = '\0';
+}
+
+//----------------------------------------------------------------------
 //chercherTaille
 // fonction comparable a strlen() sur le char * p a partir du char add
 //----------------------------------------------------------------------
@@ -126,14 +143,14 @@ ExceptionHandler (ExceptionType which)
                 //printf("SC_PutString\n");
                 int add = (int) machine->ReadRegister(4); // @ de la chaine
                 
-                char* buffer = (char*)malloc(MAX_STRING_SIZE);
+                char buffer[MAX_BUFFER_SIZE];
                 int positionBuffer = 0;
                 
                 char * s = machine->mainMemory;
                 int taille = chercherTaille(s, add);
 
-                char *word = (char*) malloc(taille); 
-                vider(buffer, taille);
+                char word[taille]; 
+                vider(buffer, MAX_STRING_SIZE);
                 copyStringFromMachine(add, word, taille);
 
                 unsigned int i = 0;
@@ -151,31 +168,29 @@ ExceptionHandler (ExceptionType which)
                 }
                 // Ecriture termine, on ecrit et on vide le buffer
                 synchconsole->SynchPutString(buffer);
-                vider(buffer, chercherTaille(buffer, 0));
+                vider(buffer, MAX_STRING_SIZE);
                 positionBuffer = 0;
-                free(buffer);
                 break;
             } case SC_GetChar: {
-                printf("SC_GetChar\n");
+                //printf("SC_GetChar\n");
                 char c = synchconsole->SynchGetChar();
                 machine->WriteRegister(2, (int)c);
                 break;
             } case SC_GetString: {
-                printf("SC_GetString\n");
-                char * c = (char *)malloc(MAX_BUFFER_SIZE);
-                synchconsole->SynchGetString(c, MAX_BUFFER_SIZE);
-                machine->WriteRegister(2, (int)c);
-                //                machine->WriteRegister(int, int);
+                //printf("SC_GetString\n");
+                int word = machine->ReadRegister(4);
+                int taille = machine->ReadRegister(5);
+                char s[taille];
+                synchconsole->SynchGetString(s, taille);
+                writeStringToMachine(s, word, taille);
                 break;
             } case SC_GetInt: {
-                printf("SC_GetInt\n");
-                int n = 0;
-                synchconsole->SynchGetInt(&n);
-                printf("val n : %d\n",n);
+                //printf("SC_GetInt\n");
+                int n = synchconsole->SynchGetInt();
                 machine->WriteRegister(2, n);
                 break;
             } case SC_PutInt: {
-                printf("SC_PutInt\n");
+                //printf("SC_PutInt\n");
                 int n = machine->ReadRegister(4);
                 synchconsole->SynchPutInt(n);
                 break;

@@ -145,9 +145,9 @@ void PutChar(char c);
  */
 void PutString(char* s);
 
-/* GetChar read c on ConsoleInput. 
+/* GetChar return a char read on ConsoleInput. 
  */
-void GetChar(char c);
+char GetChar();
 
 /* GetString read s on ConsoleInput.
  */
@@ -159,7 +159,7 @@ void PutInt(int n);
 
 /* GetInt read n on ConsoleInput. 
  */
-void GetInt(int* n);
+int GetInt();
 
 /* UserThreadCreate create a thread. 
  * f is the function to execute
