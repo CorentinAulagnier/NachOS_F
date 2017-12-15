@@ -158,13 +158,13 @@ ExceptionHandler (ExceptionType which)
             } case SC_GetChar: {
                 printf("SC_GetChar\n");
                 char c = synchconsole->SynchGetChar();
-                machine->WriteRegister(2, c);
+                machine->WriteRegister(2, (int)c);
                 break;
             } case SC_GetString: {
                 printf("SC_GetString\n");
                 char * c = (char *)malloc(MAX_BUFFER_SIZE);
                 synchconsole->SynchGetString(c, MAX_BUFFER_SIZE);
-                machine->WriteRegister(2, c);
+                machine->WriteRegister(2, (int)c);
                 //                machine->WriteRegister(int, int);
                 break;
             } case SC_GetInt: {
