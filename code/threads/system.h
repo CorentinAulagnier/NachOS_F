@@ -17,7 +17,7 @@
 #include "timer.h"
 
 #define MAX_STRING_SIZE 20
-#define MAX_INT_SIZE 10
+#define MAX_INT_SIZE 4
 #define MAX_BUFFER_SIZE 50
 
 // Initialization and cleanup routines
