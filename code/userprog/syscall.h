@@ -36,7 +36,8 @@
 #define SC_PutInt           15
 #define SC_GetInt           16
 #define SC_UserThreadCreate 17
-#define SC_UserThreadExit   18
+#define SC_StartUserThread  18
+#define SC_UserThreadExit   19
 
 
 #ifdef IN_USER_MODE
@@ -167,6 +168,10 @@ int GetInt();
  * return -1 if creation fail, 0 else
  */
 int UserThreadCreate(void f(void *arg), void *arg);
+
+/* StartUserThread start the thread with the function f.
+ */
+void StartUserThread(int f);
 
 /* UserThreadExit delete a thread. 
  */

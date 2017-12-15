@@ -200,6 +200,11 @@ ExceptionHandler (ExceptionType which)
                 //int add = (int)machine->ReadRegister(5); // @ espace mem
                 //do_UserThreadCreate(func, add);
                 break;
+            } case SC_StartUserThread: {
+                printf("SC_StartUserThread\n");
+                //int func = (int)machine->ReadRegister(4); // @ de la fonction
+                //do_UserThreadCreate(func, add);
+                break;
             } case SC_UserThreadExit: {
                 printf("SC_UserThreadExit\n");
                 //do_UserThreadExit;
@@ -215,7 +220,6 @@ ExceptionHandler (ExceptionType which)
         // End of addition
     }
 }
-
 
 
 
