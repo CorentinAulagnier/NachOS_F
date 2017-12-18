@@ -154,8 +154,9 @@ ExceptionHandler (ExceptionType which)
                 vider(buffer, MAX_BUFFER_SIZE);
                 copyStringFromMachine(add, word, taille);
 
-                unsigned int i = 0;
-                while(word[i] != '\0') {
+                int i = 0;
+                while(i < taille) {
+
                     // Buffer plein, on l'ecrit et on le vide
                     if (positionBuffer == MAX_BUFFER_SIZE) {
                         synchconsole->SynchPutString(buffer);
