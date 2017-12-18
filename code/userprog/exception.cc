@@ -150,15 +150,15 @@ ExceptionHandler (ExceptionType which)
                 int taille = chercherTaille(s, add);
 
                 char word[taille]; 
-                vider(buffer, MAX_STRING_SIZE);
+                vider(buffer, MAX_BUFFER_SIZE);
                 copyStringFromMachine(add, word, taille);
 
                 unsigned int i = 0;
                 while(word[i] != '\0') {
                     // Buffer plein, on l'ecrit et on le vide
-                    if (positionBuffer == MAX_STRING_SIZE) {
+                    if (positionBuffer == MAX_BUFFER_SIZE) {
                         synchconsole->SynchPutString(buffer);
-                        vider(buffer, MAX_STRING_SIZE);
+                        vider(buffer, MAX_BUFFER_SIZE);
                         positionBuffer = 0;
                     }
                     // Ajout du s dans le buffer lettre par lettre
@@ -166,9 +166,10 @@ ExceptionHandler (ExceptionType which)
                     positionBuffer++;
                     i++;
                 }
+
                 // Ecriture termine, on ecrit et on vide le buffer
                 synchconsole->SynchPutString(buffer);
-                vider(buffer, chercherTaille(buffer, 0));
+                vider(buffer, MAX_BUFFER_SIZE);
                 positionBuffer = 0;
                 break;
             } case SC_GetChar: {

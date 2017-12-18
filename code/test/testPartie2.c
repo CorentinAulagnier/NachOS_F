@@ -17,7 +17,7 @@ void testPutChar() {
     c = '%';PutChar(c);
     c = '\0';PutChar(c);
     c = '$';PutChar(c);
-    PutString("\n- Fin testPutChar -\n"); 
+    PutString("\n- Fin testPutChar -\n");
 }
 
 void ajout(char s[], char* c){
@@ -25,15 +25,16 @@ void ajout(char s[], char* c){
     for(i=0; c[i] != '\0'; i++){
         s[i] = c[i];
     }
+    s[i] = '\0';
 }
 
 void testPutString() {
     PutString("\n- Lancement testPutString -\n");
     char s[20];
     
-    ajout(s, "");PutString(s);
-    ajout(s, "\n");PutString(s);
     ajout(s, " ");PutString(s);
+    ajout(s, "\n");PutString(s);
+    ajout(s, "");PutString(s);
     ajout(s, "Yo"); PutString(s);
     ajout(s, "Hello");PutString(s);
     ajout(s, "");PutString(s);
@@ -53,7 +54,6 @@ void testPutString() {
     ajout(s, "~1234567890°+");PutString(s);
     ajout(s, "¬¹~#{[|`^@]}");PutString(s);
     PutString("\n- Fin testPutString -\n");
-
 }
 void testPutInt() {
     PutString("\n- Lancement testPutInt -\n");
@@ -77,7 +77,7 @@ void testPutInt() {
     i = 1000;PutInt(i);
     i = 1001;PutInt(i);
     i = 1111;PutInt(i);
-    //i = 9999;PutInt(i);
+    i = 9999;PutInt(i);
     PutString("\n- Fin testPutInt -\n");
 }
 void testGetChar() {
@@ -87,7 +87,7 @@ void testGetChar() {
     char c;
     
     while(1) {
-        c = GetChar();PutChar(c);PutString("<-\n");
+        c = GetChar();PutString("\n->");PutChar(c);
         if (c == 'Q') break;
     }
     PutString("\n- Fin testGetChar -\n");
@@ -109,8 +109,8 @@ void testGetString() {
     char c[20];
     
     while(1) {
-        GetString(c, 20);PutString(c);PutString("<-\n");
-        if (cmp(c, "Exit")) break;
+        GetString(c, 20);PutString("\n->");PutString(c);
+        if (cmp(c, "exit")) break;
     }
     PutString("\n- Fin testGetString -\n");
 }
@@ -129,18 +129,18 @@ void testGetInt() {
 
 
 int main() {
-    char c;
-    while (1) {
+    char c; int i = 1;
+    while (i > 0) {
         PutString("Quel test voulez vous lancer ?\n");
-        PutString("\t 1 - PutChar\n"); 
-        PutString("\t 2 - PutString\n"); 
-        PutString("\t 3 - PutInt\n"); 
-        PutString("\t 4 - GetChar ?\n"); 
-        PutString("\t 5 - GetString?\n"); 
+        PutString("\t 1 - PutChar\n");
+        PutString("\t 2 - PutString\n");
+        PutString("\t 3 - PutInt\n");
+        PutString("\t 4 - GetChar\n");
+        PutString("\t 5 - GetString\n");
         PutString("\t 6 - GetInt\n");
-        PutString("\t 0 - Exit\n"); 
+        PutString("\t 0 - Exit\n");
         c = GetChar();
-        if (c == '0') break;
+        if (c == '0') i = -1;
         switch (c) {
         case '1':
             testPutChar();
@@ -163,6 +163,7 @@ int main() {
         default :
             PutString("Test non reconnu\n\n");
         }
+        i++;
     }
     Halt();
 }
