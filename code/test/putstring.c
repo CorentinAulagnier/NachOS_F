@@ -1,7 +1,7 @@
 #include "syscall.h"
 
 void test() {
-
+    PutChar('A');
     PutString("Quelle taille voulez-vous lire ?\n"); 
 
     int taille = 5;
@@ -31,7 +31,8 @@ void test() {
     
 }
 
+
 int main() {
-    test();
+  //  test();
     Halt();
 }

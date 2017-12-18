@@ -168,7 +168,7 @@ ExceptionHandler (ExceptionType which)
                 }
                 // Ecriture termine, on ecrit et on vide le buffer
                 synchconsole->SynchPutString(buffer);
-                vider(buffer, MAX_STRING_SIZE);
+                vider(buffer, chercherTaille(buffer, 0));
                 positionBuffer = 0;
                 break;
             } case SC_GetChar: {
@@ -195,8 +195,7 @@ ExceptionHandler (ExceptionType which)
                 synchconsole->SynchPutInt(n);
                 break;
             } case SC_UserThreadCreate: {
-                printf("SC_UserThreadCreate\n");
-                
+                //printf("SC_UserThreadCreate\n");
                 int func = (int)machine->ReadRegister(4); // @ de la fonction
                 int add = (int)machine->ReadRegister(5); // @ espace mem
                 printf("func = '%d', add = '%d'\n", func, add);

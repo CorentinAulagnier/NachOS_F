@@ -9,13 +9,13 @@ void testPutChar() {
     c = 'A';PutChar(c);
     c = 'Z';PutChar(c);
     c = '1';PutChar(c);
-    c = '9';PutChar(c);
     c = ' ';PutChar(c);
+    c = '9';PutChar(c);
     c = '\n';PutChar(c);
     c = '\t';PutChar(c);
-    c = '\0';PutChar(c);
     c = '!';PutChar(c);
     c = '%';PutChar(c);
+    c = '\0';PutChar(c);
     c = '$';PutChar(c);
     PutString("\n- Fin testPutChar -\n"); 
 }
@@ -77,7 +77,7 @@ void testPutInt() {
     i = 1000;PutInt(i);
     i = 1001;PutInt(i);
     i = 1111;PutInt(i);
-    i = 9999;PutInt(i);
+    //i = 9999;PutInt(i);
     PutString("\n- Fin testPutInt -\n");
 }
 void testGetChar() {
@@ -129,7 +129,6 @@ void testGetInt() {
 
 
 int main() {
-    PutString("Bonjour1 ?\n");
     char c;
     while (1) {
         PutString("Quel test voulez vous lancer ?\n");
