@@ -16,9 +16,9 @@
 #include "stats.h"
 #include "timer.h"
 
-#define MAX_STRING_SIZE 20
-#define MAX_INT_SIZE 4
-#define MAX_BUFFER_SIZE 50
+#define MAX_STRING_SIZE 100
+#define MAX_INT_SIZE 10
+#define MAX_BUFFER_SIZE 100
 
 // Initialization and cleanup routines
 extern void Initialize (int argc, char **argv);	// Initialization,

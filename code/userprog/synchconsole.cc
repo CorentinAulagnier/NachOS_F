@@ -57,8 +57,8 @@ void SynchConsole::SynchGetString(char *s, int n) {
 
 void SynchConsole::SynchPutInt(int n){
 
-      char buff[sizeof(int)];
-      snprintf(buff, sizeof(int), "%d", n);
+      char buff[MAX_INT_SIZE];
+      snprintf(buff, MAX_INT_SIZE, "%d", n);
       SynchPutString(buff);
 
 }

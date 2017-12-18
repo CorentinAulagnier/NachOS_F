@@ -1,5 +1,4 @@
 #include "syscall.h"
-//#include "system.h"
 
 void testPutChar() {
     PutString("\n- Lancement testPutChar -\n"); 
@@ -30,8 +29,7 @@ void ajout(char s[], char* c){
 
 void testPutString() {
     PutString("\n- Lancement testPutString -\n");
-    char s[20];
-    
+    char s[50];
     ajout(s, " ");PutString(s);
     ajout(s, "\n");PutString(s);
     ajout(s, "");PutString(s);
@@ -48,7 +46,7 @@ void testPutString() {
     ajout(s, "\0Bonjour");PutString(s);
     ajout(s, "\nBonjour");PutString(s);
     ajout(s, "\tBonjour");PutString(s);
-    ajout(s, "Bonjour!Bonjour?Bonjour!Bonjour?");PutString(s);
+    ajout(s, "Bonjour!Bonjour?Bonjour!Bonjour?\n");PutString(s);
     ajout(s, ",?;.:/!§ù%*µ£");PutString(s);
     ajout(s, "&é'(-è_çà)=");PutString(s);
     ajout(s, "~1234567890°+");PutString(s);
@@ -84,11 +82,10 @@ void testGetChar() {
     PutString("\n- Lancement testGetChar -\n");
     PutString("\n- Ecrivez un caractere, il sera reecrit apres ! -\n");
     PutString("\n- Ecrivez 'Q' pour quitter-\n");
-    char c;
+    char c = 'a';
     
-    while(1) {
-        c = GetChar();PutString("\n->");PutChar(c);
-        if (c == 'Q') break;
+    while(c != 'Q') {
+        c = GetChar();PutChar(c);PutChar('\n');
     }
     PutString("\n- Fin testGetChar -\n");
 }
@@ -106,11 +103,10 @@ void testGetString() {
     PutString("\n- Lancement testGetString -\n");
     PutString("\n- Ecrivez une chaine de caracteres, elle sera reecrite apres ! -\n");
     PutString("\n- Ecrivez 'exit' pour quitter-\n");
-    char c[20];
+    char c[50];
     
-    while(1) {
-        GetString(c, 20);PutString("\n->");PutString(c);
-        if (cmp(c, "exit")) break;
+    while(!cmp(c, "exit")) {
+        GetString(c, 50);PutString(c);PutChar('\n');
     }
     PutString("\n- Fin testGetString -\n");
 }
@@ -118,19 +114,18 @@ void testGetInt() {
     PutString("\n- Lancement testGetInt -\n");
     PutString("\n- Ecrivez un entier, elle sera reecrite apres ! -\n");
     PutString("\n- Ecrivez '777' pour quitter-\n");
-    int c;
+    int c = 0;
     
-    while(1) {
-        c = GetInt();PutInt(c);PutString("<-\n");
-        if (c == 777) break;
+    while(c != 777) {
+        c = GetInt();PutInt(c);PutChar('\n');
     }
     PutString("\n- Fin testGetInt -\n");
 } 
 
 
 int main() {
-    char c; int i = 1;
-    while (i > 0) {
+    char c = '1';
+    while (c != '0') {
         PutString("Quel test voulez vous lancer ?\n");
         PutString("\t 1 - PutChar\n");
         PutString("\t 2 - PutString\n");
@@ -140,7 +135,6 @@ int main() {
         PutString("\t 6 - GetInt\n");
         PutString("\t 0 - Exit\n");
         c = GetChar();
-        if (c == '0') i = -1;
         switch (c) {
         case '1':
             testPutChar();
@@ -163,7 +157,6 @@ int main() {
         default :
             PutString("Test non reconnu\n\n");
         }
-        i++;
     }
     Halt();
 }
