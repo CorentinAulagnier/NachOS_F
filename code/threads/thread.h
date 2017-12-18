@@ -133,12 +133,13 @@ class Thread
 
     int userRegisters[NumTotalRegs];	// user-level CPU register state
 
-    /* Ajouté :
+  public:
+  
+      /* Ajouté :
      * Pour pouvoir faire passer arg dans userThread.cc
      */
     int argUser;
-
-  public:
+    
     void SaveUserState ();	// save user-level register state
     void RestoreUserState ();	// restore user-level register state
 

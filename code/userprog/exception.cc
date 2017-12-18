@@ -24,6 +24,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
+#include "userthread.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -199,7 +200,6 @@ ExceptionHandler (ExceptionType which)
                 printf("SC_UserThreadCreate\n");
                 int func = (int)machine->ReadRegister(4); // @ de la fonction
                 int add = (int)machine->ReadRegister(5); // @ espace mem
-                printf("func = '%d', add = '%d'\n", func, add);
                 
                 int retour = do_UserThreadCreate(func, add);
                                 

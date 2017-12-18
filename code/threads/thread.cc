@@ -42,7 +42,7 @@ Thread::Thread (const char *threadName)
     space = NULL;
 
     /*** NULL par défaut -> Peut eventuellement buguer *****************************************/
-    argUser = NULL;
+    argUser = (int)NULL;
 
     // FBT: Need to initialize special registers of simulator to 0
     // in particular LoadReg or it could crash when switching
@@ -117,6 +117,7 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     scheduler->ReadyToRun (this);	// ReadyToRun assumes that interrupts 
     // are disabled!
     (void) interrupt->SetLevel (oldLevel);
+    
 }
 
 //----------------------------------------------------------------------
@@ -312,7 +313,7 @@ SetupThreadState ()
 
 #endif // USER_PROGRAM
 
-  // LB: The default level for interrupts is IntOn.
+  // LB: The default level for interrupts     printf("fin de fork \n");is IntOn.
   InterruptEnable (); 
 
 }
@@ -376,6 +377,7 @@ Thread::StackAllocate (VoidFunctionPtr func, int arg)
     machineState[InitialPCState] = (int) func;
     machineState[InitialArgState] = arg;
     machineState[WhenDonePCState] = (int) ThreadFinish;
+    
 }
 
 #ifdef USER_PROGRAM
@@ -393,6 +395,7 @@ Thread::StackAllocate (VoidFunctionPtr func, int arg)
 void
 Thread::SaveUserState ()
 {
+
     for (int i = 0; i < NumTotalRegs; i++)
 	userRegisters[i] = machine->ReadRegister (i);
 }
@@ -409,6 +412,7 @@ Thread::SaveUserState ()
 void
 Thread::RestoreUserState ()
 {
+
     for (int i = 0; i < NumTotalRegs; i++)
 	machine->WriteRegister (i, userRegisters[i]);
 }

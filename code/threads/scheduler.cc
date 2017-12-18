@@ -53,6 +53,7 @@ Scheduler::~Scheduler ()
 void
 Scheduler::ReadyToRun (Thread * thread)
 {
+
     DEBUG ('t', "Putting thread %s on ready list.\n", thread->getName ());
 
     thread->setStatus (READY);
@@ -90,6 +91,7 @@ Scheduler::FindNextToRun ()
 void
 Scheduler::Run (Thread * nextThread)
 {
+
     Thread *oldThread = currentThread;
 
     // LB: For safety...

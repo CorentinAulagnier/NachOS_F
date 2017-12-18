@@ -1,23 +1,25 @@
 #include "syscall.h"
 
-void f1() {
-    PutChar('A');
+void f1(void* c) {
+
+    PutChar(*(char*)c);
 }
 
-void f2(int i){
-    PutInt(i);
+void f2(void* i){
+//PutString("Bonjour\n");
+    PutInt(*(int*)i);
 }
 
 int main() {
 
-    int i = 2;
-
-    UserThreadCreate(&f1, NULL);
+    int i = 45;
+    //char c = 'A';
+    //UserThreadCreate(&f1, &c);
     UserThreadCreate(&f2, &i);
 
 
     UserThreadExit();
-    UserThreadExit();
+    //UserThreadExit();
 
-    //Halt();
+    Halt();
 }
