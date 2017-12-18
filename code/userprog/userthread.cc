@@ -31,4 +31,10 @@ int do_UserThreadCreate(int f, int arg) {
     return 1;
 }
 
+int do_UserThreadExit() {
 
+    delete currentThread->space;
+    currentThread->Finish();
+    
+    return 1;
+}
