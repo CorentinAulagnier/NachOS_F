@@ -176,9 +176,14 @@ AddrSpace::InitRegisters ()
 //      For now, nothing!
 //----------------------------------------------------------------------
 
+ /* Complété : 
+  * Pour sauvegarder l'état de la machine.
+  */
 void
 AddrSpace::SaveState ()
 {
+    pageTable = machine->pageTable;
+    numPages = machine->pageTableSize;
 }
 
 //----------------------------------------------------------------------
@@ -188,6 +193,7 @@ AddrSpace::SaveState ()
 //
 //      For now, tell the machine where to find the page table.
 //----------------------------------------------------------------------
+
 
 void
 AddrSpace::RestoreState ()

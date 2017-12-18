@@ -40,6 +40,10 @@ Thread::Thread (const char *threadName)
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
     space = NULL;
+
+    /*** NULL par défaut -> Peut eventuellement buguer *****************************************/
+    argUser = NULL;
+
     // FBT: Need to initialize special registers of simulator to 0
     // in particular LoadReg or it could crash when switching
     // user threads.
@@ -408,6 +412,5 @@ Thread::RestoreUserState ()
     for (int i = 0; i < NumTotalRegs; i++)
 	machine->WriteRegister (i, userRegisters[i]);
 }
+
 #endif
-
-
