@@ -1,0 +1,20 @@
+exception.cc
+
+SYNOPSIS
+    #include <.h>
+
+    int fonction1(para1* nom1);
+
+    long fonction2(para1* nom1);
+       
+DESCRIPTION
+    La fonction fonction1 ... 
+
+    La fonction fonction2 ... 
+       
+VALEUR RENVOYÉE
+    La fonction fonction1 ne renvoie pas de valeur. Si elles réussissent
+    totalement 
+
+    La fonction fonction2 renvoie la position actuelle. Sinon, elles renvoient
+    -1
