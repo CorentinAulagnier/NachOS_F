@@ -56,11 +56,6 @@ class AddrSpace
      * Liste des threads
      */
     SynchListThread* listThread;
-    
-    /* Ajouté :
-     * Identifiant du thread
-     */
-    int tid;
 
     /* Ajouté :
      * Calcule l'offset de la pile du thread de numero numstack

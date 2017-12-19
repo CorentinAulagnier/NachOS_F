@@ -204,7 +204,7 @@ ExceptionHandler (ExceptionType which)
                 int add = (int)machine->ReadRegister(5); // @ espace mem
                 
                 int retour = do_UserThreadCreate(func, add);
-                                
+                printf("retour = %d\n", retour);     
                 machine->WriteRegister(2, retour);
                 break;
             } case SC_UserThreadExit: {

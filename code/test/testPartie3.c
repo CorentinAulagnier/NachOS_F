@@ -15,9 +15,14 @@ void f2(void* i){
 int main() {
 
     int i = 45;
-    //char c = 'A';
-    //UserThreadCreate(&f1, &c);
+    char c = 'A';
+    int tid2 = UserThreadCreate(&f1, &c);
     int tid = UserThreadCreate(&f2, &i);
-tid = tid+1;
+
+PutString("\n tid2 = ");
+PutInt(tid2);
+PutString("\n tid = ");
+PutInt(tid);
+
     Halt();
 }

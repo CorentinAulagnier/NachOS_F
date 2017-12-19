@@ -24,6 +24,16 @@
 					// execution stack, for detecting 
 					// stack overflows
 
+static int newTid = 0;
+static Semaphore *ecriture = new Semaphore("newTid",1);
+
+int getNewTid() {
+    ecriture->P();
+    newTid++;
+    ecriture->V();
+    return newTid;
+}
+
 //----------------------------------------------------------------------
 // Thread::Thread
 //      Initialize a thread control block, so that we can then call
@@ -43,7 +53,12 @@ Thread::Thread (const char *threadName)
 
     /*** NULL par défaut -> Peut eventuellement buguer *****************************************/
     argUser = (int)NULL;
-
+    
+    /* Ajouté :
+     * Initialisation de l'identifiant
+     */
+    tid = getNewTid();
+    
     // FBT: Need to initialize special registers of simulator to 0
     // in particular LoadReg or it could crash when switching
     // user threads.

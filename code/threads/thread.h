@@ -56,12 +56,14 @@
 #define StackSize	(4 * 1024)	// in words
 
 
+
 // Thread state
 enum ThreadStatus
 { JUST_CREATED, RUNNING, READY, BLOCKED };
 
 // external function, dummy routine whose sole job is to call Thread::Print
 extern void ThreadPrint (int arg);
+
 
 // The following class defines a "thread control block" -- which
 // represents a single thread of execution.
@@ -81,6 +83,7 @@ class Thread
     // THEY MUST be in this position for SWITCH to work.
     int *stackTop;		// the current stack pointer
     int machineState[MachineStateSize];	// all registers except for stackTop
+    static int newTid;
 
   public:
       Thread (const char *debugName);	// initialize a Thread 
@@ -126,6 +129,8 @@ class Thread
     // Allocate a stack for thread.
     // Used internally by Fork()
 
+
+    
 #ifdef USER_PROGRAM
 // A thread running a user program actually has *two* sets of CPU registers -- 
 // one for its state while executing user code, one for its state 
@@ -145,6 +150,11 @@ class Thread
      */
     int numStackInAddrSpace;
 
+    /* Ajouté :
+     * Identifiant du thread
+     */
+    int tid;
+    
     void SaveUserState ();	// save user-level register state
     void RestoreUserState ();	// restore user-level register state
 
