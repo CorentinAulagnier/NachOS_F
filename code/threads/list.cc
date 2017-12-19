@@ -257,3 +257,7 @@ ListElement* List::GetFirst(){
     return first;
 }
 
+void List::SetFirst(void* item){
+    first = (ListElement*)item;
+}
+

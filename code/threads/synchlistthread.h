@@ -24,9 +24,11 @@ class SynchListThread
     itemThread* Remove (int tid);
     itemThread* Find (int tid);
     
+    Semaphore *lock;
+    
   private:
     List * list;
-    Semaphore *lock;
+
 };
 
 #endif // SYNCHLISTTHREAD_H

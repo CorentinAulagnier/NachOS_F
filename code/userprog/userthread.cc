@@ -23,10 +23,7 @@ currentThread->numStackInAddrSpace);
 int do_UserThreadCreate(int f, int arg) {
 
     currentThread->space->semNbThread->P();
-    /*
-    if (currentThread->space->nbThreads == 0){
-        terminaison->P();
-    }*/
+
     
 
     /* Ajouté :
@@ -36,10 +33,9 @@ int do_UserThreadCreate(int f, int arg) {
     if(test == -1){
         currentThread->space->semNbThread->V();
         return 0;
-    } else {
-        currentThread->numStackInAddrSpace = test ;
-        currentThread->space->nbThreads ++;
     }
+    currentThread->space->nbThreads ++;
+    
     
     currentThread->space->semNbThread->V();
 
@@ -47,6 +43,7 @@ int do_UserThreadCreate(int f, int arg) {
     Thread* newThread = new Thread("Thread créé");
     if (newThread == NULL) return 0;
 
+    newThread->numStackInAddrSpace = test ;
     /* Sauvegarde de l'argument de f // TODO si bug : arg pas NULL*/
     newThread->argUser = arg;
     
@@ -55,8 +52,12 @@ int do_UserThreadCreate(int f, int arg) {
     itemThread* it = newItemThread(newThread->tid);
     currentThread->space->listThread->Append(it);
     
-
-
+    /*
+    if (newThread->tid == 2){
+        //currentThread->space->listThread->lock->P();
+        currentThread->space->semNbThread->P();
+    }
+*/
     
     /* Initialisation et Placement dans la file d'attente des threads noyaux */
     newThread->Fork(StartUserThread, f);
@@ -65,32 +66,27 @@ int do_UserThreadCreate(int f, int arg) {
 }
 
 
-int do_UserThreadExit() {
+void do_UserThreadExit() {
 
     currentThread->space->semNbThread->P();
-    
     currentThread->space->nbThreads --;
     /*
     if (currentThread->space->nbThreads == 0){
         terminaison->V();
     }
     */
-    
+
     itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
     it->semThread->V();
     
+
     currentThread->space->structNbThreads->Clear(currentThread->numStackInAddrSpace);
-    currentThread->Finish();
-    delete currentThread;
-    
     currentThread->space->semNbThread->V();
-    
-    return 1;
+    currentThread->Finish();
+    //delete currentThread;
 }
 
 void do_UserThreadJoin(int tid) {
-
     itemThread* it = currentThread->space->listThread->Find(tid);
-    it->semThread->P();
-
+    if (it != NULL) it->semThread->P();
 }

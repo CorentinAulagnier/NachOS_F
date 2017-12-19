@@ -1,4 +1,5 @@
 #include "synchlistthread.h"
+#include "userthread.h"
 
 SynchListThread::SynchListThread()
 {
@@ -13,12 +14,20 @@ SynchListThread::~SynchListThread ()
 }
 
 void
-SynchListThread::Append (itemThread * item)
+SynchListThread::Append (itemThread* item)
 {
     lock->P();		
-    
-    list->Append(item);
-    	
+
+    itemThread * elm = (itemThread *)list->GetFirst();
+
+    if (elm == NULL) {
+        list->SetFirst(item);
+    } else {
+        while (elm->next != NULL ){
+            elm = elm->next;
+        }
+        elm->next = item;
+    }
     lock->V();
 }
 
@@ -49,6 +58,7 @@ SynchListThread::Remove (int tid)
 itemThread*
 SynchListThread::Find (int tid)
 {
+
     lock->P();		
 
     itemThread * elm = (itemThread *)list->GetFirst();
@@ -56,7 +66,6 @@ SynchListThread::Find (int tid)
     while (elm != NULL && elm->tid != tid) {
         elm = elm->next;
     }
-
     lock->V();
     return elm;
 }

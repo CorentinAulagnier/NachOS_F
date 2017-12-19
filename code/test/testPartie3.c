@@ -23,6 +23,10 @@ PutString("\n tid2 = ");
 PutInt(tid2);
 PutString("\n tid = ");
 PutInt(tid);
+PutString("\n");
+
+    UserThreadJoin(tid2);
+    UserThreadJoin(tid);
 
     Halt();
 }

@@ -199,25 +199,22 @@ ExceptionHandler (ExceptionType which)
                 synchconsole->SynchPutInt(n);
                 break;
             } case SC_UserThreadCreate: {
-                printf("SC_UserThreadCreate\n");
+                printf("\nSC_UserThreadCreate\n");
                 int func = (int)machine->ReadRegister(4); // @ de la fonction
                 int add = (int)machine->ReadRegister(5); // @ espace mem
                 
                 int retour = do_UserThreadCreate(func, add);
-                printf("retour = %d\n", retour);     
+
                 machine->WriteRegister(2, retour);
                 break;
             } case SC_UserThreadExit: {
-                printf("SC_UserThreadExit\n");
-                /*
-                int retour = do_UserThreadExit();
-                
-                machine->WriteRegister(2, retour);
-                */
+                printf("\nSC_UserThreadExit\n");
+                do_UserThreadExit();
                 break;
             } case SC_UserThreadJoin: {
-                printf("SC_UserThreadJoin\n");
+                printf("\nSC_UserThreadJoin");
                 int tid = (int)machine->ReadRegister(4); // @ de la fonction
+                printf(" %d\n",tid);
                 do_UserThreadJoin(tid);
                 break;
             } default: {
