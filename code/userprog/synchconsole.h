@@ -22,6 +22,11 @@ public:
     void SynchPutInt(int n);
     int SynchGetInt();
     
+    void WriteChar(char ch);
+    char ReadChar();
+    void LectureChaine(char *s, int n);
+    void EcritureChaine(char *s);
+    
 private:
 
     Console *console;
