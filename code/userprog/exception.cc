@@ -130,6 +130,7 @@ ExceptionHandler (ExceptionType which)
     if (which == SyscallException) {
         switch (type) {
             case SC_Halt: {
+                //terminaison->P();
                 DEBUG('a', "Shutdown, initiated by user program.\n");
                 interrupt->Halt();
                 break;
@@ -205,21 +206,21 @@ ExceptionHandler (ExceptionType which)
                 int retour = do_UserThreadCreate(func, add);
                                 
                 machine->WriteRegister(2, retour);
-                /*
-                add = (int)machine->ReadRegister(2); // @ espace mem
-                printf("r2 = '%d'\n", add);
-                int retour = do_UserThreadCreate(func, add);
-                machine->WriteRegister(2, retour);
-                */
                 break;
             } case SC_UserThreadExit: {
                 printf("SC_UserThreadExit\n");
                 /*
-                do_UserThreadExit();
+                int retour = do_UserThreadExit();
+                
+                machine->WriteRegister(2, retour);
                 */
                 break;
-            }
-            default: {
+            } case SC_UserThreadJoin: {
+                printf("SC_UserThreadJoin\n");
+                int tid = (int)machine->ReadRegister(4); // @ de la fonction
+                do_UserThreadJoin(tid);
+                break;
+            } default: {
                 printf("Unexpected user mode exception %d %d\n", which, type);
                 ASSERT(FALSE);
             }

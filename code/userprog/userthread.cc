@@ -23,7 +23,16 @@ currentThread->numStackInAddrSpace);
 int do_UserThreadCreate(int f, int arg) {
 
     currentThread->space->semNbThread->P();
-
+    /*
+    if (currentThread->space->nbThreads == 0){
+        terminaison->P();
+    }*/
+    
+    
+    itemThread* it = newItemThread(currentThread->space->tid);
+    currentThread->space->listThread->Append(it);
+    
+    
     /* Ajouté :
      * On ajoute un thread au processus + On enregistre le numéro du thread
      */
@@ -50,9 +59,33 @@ int do_UserThreadCreate(int f, int arg) {
     return 1;
 }
 
+
 int do_UserThreadExit() {
 
+    currentThread->space->semNbThread->P();
+    
+    currentThread->space->nbThreads --;
+    /*
+    if (currentThread->space->nbThreads == 0){
+        terminaison->V();
+    }
+    */
+    
+    itemThread* it = currentThread->space->listThread->Find(currentThread->space->tid);
+    it->semThread->V();
+    
+    currentThread->space->structNbThreads->Clear(currentThread->numStackInAddrSpace);
     currentThread->Finish();
+    delete currentThread;
+    
+    currentThread->space->semNbThread->V();
     
     return 1;
+}
+
+void do_UserThreadJoin(int tid) {
+
+    itemThread* it = currentThread->space->listThread->Find(tid);
+    it->semThread->P();
+
 }

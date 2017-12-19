@@ -252,3 +252,8 @@ List::SortedRemove (long long *keyPtr)
     delete element;
     return thing;
 }
+
+ListElement* List::GetFirst(){
+    return first;
+}
+

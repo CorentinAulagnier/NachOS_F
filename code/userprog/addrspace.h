@@ -17,6 +17,7 @@
 #include "filesys.h"
 #include "bitmap.h"
 #include "synch.h"
+#include "synchlistthread.h"
 
 #define UserStackSize		4 * 4 * 1024	// increase this as necessary!
 #define MaxNbThread		5	// Nombre max de thread par processus
@@ -50,6 +51,16 @@ class AddrSpace
      * Semaphore gérant l'exclusivité de structNbThreads et nbThreads
      */
     Semaphore* semNbThread;
+    
+     /* Ajouté :
+     * Liste des threads
+     */
+    SynchListThread* listThread;
+    
+    /* Ajouté :
+     * Identifiant du thread
+     */
+    int tid;
 
     /* Ajouté :
      * Calcule l'offset de la pile du thread de numero numstack

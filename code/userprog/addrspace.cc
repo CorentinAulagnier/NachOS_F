@@ -22,6 +22,8 @@
 
 #include <strings.h>		/* for bzero */
 
+static int newTid = 0;
+
 //----------------------------------------------------------------------
 // SwapHeader
 //      Do little endian to big endian conversion on the bytes in the 
@@ -69,6 +71,17 @@ AddrSpace::AddrSpace (OpenFile * executable)
      * Initialisation de la bitmap
      */
     this->structNbThreads = new BitMap(MaxNbThread);
+    
+     /* Ajouté :
+     * Initialisation de la liste des threads
+     */
+    this->listThread = new SynchListThread();
+    
+    /* Ajouté :
+     * Initialisation de l'identifiant
+     */
+    this->tid = newTid;
+    newTid ++;
 
     /* Ajouté :
      * Initialisation de nbThreads
