@@ -65,6 +65,22 @@ AddrSpace::AddrSpace (OpenFile * executable)
     NoffHeader noffH;
     unsigned int i, size;
 
+    /* Ajouté :
+     * Initialisation de la bitmap
+     */
+    this->structNbThreads = new BitMap(MaxNbThread);
+
+    /* Ajouté :
+     * Initialisation de nbThreads
+     */
+    this->nbThreads = 0;
+
+    /* Ajouté :
+     * Initialisation du semaphore
+     */
+    this->semNbThread = new Semaphore("SemLock",1);
+
+
     executable->ReadAt ((char *) &noffH, sizeof (noffH), 0);
     if ((noffH.noffMagic != NOFFMAGIC) &&
 	(WordToHost (noffH.noffMagic) == NOFFMAGIC))
@@ -133,6 +149,12 @@ AddrSpace::~AddrSpace ()
   // delete pageTable;
   delete [] pageTable;
   // End of modification
+
+    /* Ajouté :
+     * Destruction des attributs rajoutés
+     */
+    delete structNbThreads;
+    delete semNbThread;
 }
 
 //----------------------------------------------------------------------
@@ -200,4 +222,15 @@ AddrSpace::RestoreState ()
 {
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
+}
+
+
+/* Ajouté :
+ * Calcule l'offset de la pile du thread de numero numstack
+ */
+
+int
+AddrSpace::CalculOffsetStack(int nbPagePile, int pagesize, int numstack)
+{
+   return numPages * pagesize - 16 - (nbPagePile * pagesize * numstack);
 }

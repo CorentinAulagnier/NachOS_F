@@ -11,12 +11,31 @@ void StartUserThread(int f) {
     machine->WriteRegister(NextPCReg, f + 4);
     machine->WriteRegister(4,  currentThread->argUser);
 
-    machine->WriteRegister(StackReg, machine->ReadRegister(PCReg) - (3 * PageSize));
+    
+    int decalage = currentThread->space->CalculOffsetStack(NbPagesPileThread,PageSize,
+currentThread->numStackInAddrSpace);
+
+    machine->WriteRegister(StackReg, decalage);
 
     machine->Run();
 }
 
 int do_UserThreadCreate(int f, int arg) {
+
+    currentThread->space->semNbThread->P();
+
+    /* Ajouté :
+     * On ajoute un thread au processus + On enregistre le numéro du thread
+     */
+    int test = currentThread->space->structNbThreads->Find();
+    if(test == -1){
+        currentThread->space->semNbThread->V();
+        return 0;
+    } else {
+        currentThread->numStackInAddrSpace = test ;
+        currentThread->space->nbThreads ++;
+    } 
+    currentThread->space->semNbThread->V();
 
     /* Création du nouveau thread */
     Thread* newThread = new Thread("Thread créé");
@@ -33,7 +52,6 @@ int do_UserThreadCreate(int f, int arg) {
 
 int do_UserThreadExit() {
 
-    delete currentThread->space;
     currentThread->Finish();
     
     return 1;

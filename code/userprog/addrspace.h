@@ -15,8 +15,12 @@
 
 #include "copyright.h"
 #include "filesys.h"
+#include "bitmap.h"
+#include "synch.h"
 
 #define UserStackSize		4 * 4 * 1024	// increase this as necessary!
+#define MaxNbThread		5	// Nombre max de thread par processus
+#define NbPagesPileThread		3	// Nombre de page pour la pile de chaque thread
 
 class AddrSpace
 {
@@ -31,6 +35,26 @@ class AddrSpace
 
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
+
+    /* Ajouté :
+     * Bitmap gérant le nombre de threads d'un processus
+     */
+    BitMap* structNbThreads;
+
+    /* Ajouté :
+     * Nombre de thread en cours d'exécution pour le processus
+     */
+    int nbThreads;
+
+    /* Ajouté :
+     * Semaphore gérant l'exclusivité de structNbThreads et nbThreads
+     */
+    Semaphore* semNbThread;
+
+    /* Ajouté :
+     * Calcule l'offset de la pile du thread de numero numstack
+     */
+    int CalculOffsetStack(int nbPagePile, int pagesize, int numstack);
 
   private:
       TranslationEntry * pageTable;	// Assume linear page table translation

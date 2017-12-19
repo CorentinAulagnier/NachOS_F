@@ -135,11 +135,16 @@ class Thread
 
   public:
   
-      /* Ajouté :
+    /* Ajouté :
      * Pour pouvoir faire passer arg dans userThread.cc
      */
     int argUser;
     
+    /* Ajouté :
+     * Numéro de la pile du thread dans l'addrSpace commun
+     */
+    int numStackInAddrSpace;
+
     void SaveUserState ();	// save user-level register state
     void RestoreUserState ();	// restore user-level register state
 
