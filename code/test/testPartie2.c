@@ -135,6 +135,9 @@ int main() {
         PutString("\t 6 - GetInt\n");
         PutString("\t 0 - Exit\n");
         c = GetChar();
+        if(c=='\n') {
+            c = GetChar();
+        }
         switch (c) {
         case '1':
             testPutChar();

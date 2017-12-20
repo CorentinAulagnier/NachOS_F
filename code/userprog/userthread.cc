@@ -97,8 +97,9 @@ void do_UserThreadJoin(int tid) {
     if (it != NULL)  {
         it->semThread->P();
         printf("Le thread %d s'est bien terminé.\n",it->tid);
-        currentThread->space->listThread->Remove(it->tid);
-        printList(currentThread->space->listThread);
+        free(currentThread->space->listThread->Remove(it->tid));
+        //pour le debug : etat de la liste
+        //printList(currentThread->space->listThread);
     } else {
         printf("Exception: le thread spécifié lors de l'appel à UserThreadJoin n'existe pas.\n");
     }

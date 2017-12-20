@@ -96,10 +96,10 @@ void test_trop_de_threads() {
 void test_robustesse() {
     PutString("***** Test n°4: Robustesse *****\n");
     
-    PutString("Tentative de UserThreadExit hors d'une fonction: \n");
+    PutString("Tentative de UserThreadExit hors d'un thread:");
     UserThreadExit();
     
-    PutString("Tentative de UserThreadJoin sur thread inexistant: \n");
+    PutString("\n\nTentative de UserThreadJoin sur thread inexistant:");
     UserThreadJoin(5);
     
     PutString("\n***** Fin Test n°4: Robustesse *****\n\n");
@@ -114,6 +114,9 @@ int main() {
         PutString("\t 4 - Robustesse\n");
         PutString("\t 0 - Exit\n");
         char c = GetChar();
+        if(c=='\n') {
+            c = GetChar();
+        }
         switch (c) {
             case '0':
                 PutString("\n***** Fin des tests ******\n\n");   
