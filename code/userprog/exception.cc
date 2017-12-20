@@ -214,7 +214,7 @@ ExceptionHandler (ExceptionType which)
             } case SC_UserThreadJoin: {
                 printf("\nSC_UserThreadJoin");
                 int tid = (int)machine->ReadRegister(4); // @ de la fonction
-                printf(" %d\n",tid);
+                printf(" tid %d\n",tid);
                 do_UserThreadJoin(tid);
                 break;
             } default: {

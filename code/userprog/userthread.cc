@@ -69,24 +69,35 @@ int do_UserThreadCreate(int f, int arg) {
 void do_UserThreadExit() {
 
     currentThread->space->semNbThread->P();
-    currentThread->space->nbThreads --;
-    /*
-    if (currentThread->space->nbThreads == 0){
-        terminaison->V();
-    }
-    */
-
-    itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
-    it->semThread->V();
     
+    if(currentThread->space->nbThreads <= 0 ) {
+        currentThread->space->semNbThread->V();
+        printf("Exception: appel erroné à la fonction UserThreadExit\n");
+    } else {
+        currentThread->space->nbThreads --;
+        /*
+        if (currentThread->space->nbThreads == 0){
+            terminaison->V();
+        }
+        */
 
-    currentThread->space->structNbThreads->Clear(currentThread->numStackInAddrSpace);
-    currentThread->space->semNbThread->V();
-    currentThread->Finish();
-    //delete currentThread;
+        itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
+        it->semThread->V();
+        
+
+        currentThread->space->structNbThreads->Clear(currentThread->numStackInAddrSpace);
+        currentThread->space->semNbThread->V();
+        currentThread->Finish();
+        //delete currentThread;
+    }
 }
 
 void do_UserThreadJoin(int tid) {
     itemThread* it = currentThread->space->listThread->Find(tid);
-    if (it != NULL) it->semThread->P();
+    if (it != NULL)  {
+        it->semThread->P();
+    } else {
+        printf("Exception: le thread spécifié lors de l'appel à UserThreadJoin n'existe pas.\n");
+    }
+    
 }
