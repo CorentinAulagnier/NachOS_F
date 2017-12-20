@@ -23,6 +23,7 @@ class SynchListThread
     void Append (itemThread *);
     itemThread* Remove (int tid);
     itemThread* Find (int tid);
+    List* GetList();
     
     Semaphore *lock;
     

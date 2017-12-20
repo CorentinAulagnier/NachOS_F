@@ -106,17 +106,18 @@ void test_robustesse() {
 }
 
 int main() {
-    char c = '1';
-    while (c != '0') {
+    while (1) {
         PutString("Quel test voulez vous lancer ?\n");
         PutString("\t 1 - Threads simultanés\n");
         PutString("\t 2 - Threads séquentiels\n");
         PutString("\t 3 - Dépacement nombres de threads\n");
         PutString("\t 4 - Robustesse\n");
         PutString("\t 0 - Exit\n");
-        c = GetChar();
+        char c = GetChar();
         switch (c) {
             case '0':
+                PutString("\n***** Fin des tests ******\n\n");   
+                Halt();
                 break;
             case '1':
                 test_simult();
@@ -134,7 +135,4 @@ int main() {
                 PutString("Test non reconnu\n\n");
         }
     }
-    
-    PutString("\n***** Fin des tests ******\n\n");   
-    Halt();
 }

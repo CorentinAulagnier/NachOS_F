@@ -36,7 +36,8 @@ SynchListThread::Remove (int tid)
 {
     lock->P();		
 
-    itemThread * elm = (itemThread *)list->GetFirst();
+    itemThread * first = (itemThread *)list->GetFirst();
+    itemThread * elm = first;
     itemThread * prec = NULL;
 
     while (elm != NULL && elm->tid != tid) {
@@ -44,9 +45,10 @@ SynchListThread::Remove (int tid)
         elm = elm->next;
     }
     
-    if (prec == NULL) {
-        elm =  (itemThread *)list->Remove();
-    } else if (elm == NULL) {
+    if (elm == NULL) {
+        //rien à enlever
+    } else if (prec == NULL) {
+        list->SetFirst(first->next);
     } else {
         prec->next = elm->next;
     }
@@ -78,3 +80,8 @@ itemThread* newItemThread(int tid) {
     return it;
 }
 
+
+List*
+SynchListThread::GetList() {
+    return this->list;
+}

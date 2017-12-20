@@ -96,8 +96,26 @@ void do_UserThreadJoin(int tid) {
     itemThread* it = currentThread->space->listThread->Find(tid);
     if (it != NULL)  {
         it->semThread->P();
+        printf("Le thread %d s'est bien terminé.\n",it->tid);
+        currentThread->space->listThread->Remove(it->tid);
+        printList(currentThread->space->listThread);
     } else {
         printf("Exception: le thread spécifié lors de l'appel à UserThreadJoin n'existe pas.\n");
     }
     
+}
+
+void printList(SynchListThread* synchlist) {
+    itemThread * elm = (itemThread *)synchlist->GetList()->GetFirst();
+    int i = 0;
+    if(elm==NULL) {
+        printf("La liste est vide.\n");
+    } else {
+        printf("Etat de la liste :\n");
+        while(elm!=NULL) {
+            printf("élément %d - tid %d\n", i+1, elm->tid);
+            elm = elm->next;
+            i++;
+        }
+    }
 }
