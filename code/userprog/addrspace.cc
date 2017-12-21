@@ -20,8 +20,6 @@
 #include "addrspace.h"
 #include "noff.h"
 
-#include <strings.h>		/* for bzero */
-
 //----------------------------------------------------------------------
 // SwapHeader
 //      Do little endian to big endian conversion on the bytes in the 
@@ -139,7 +137,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     for (i = 0; i < numPages; i++)
       {
 	  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
-	  pageTable[i].physicalPage = i;
+	  pageTable[i].physicalPage = frameprovider->GetEmptyFrame(); /** Changé */
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;
@@ -148,9 +146,12 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	  // pages to be read-only
       }
 
-// zero out the entire address space, to zero the unitialized data segment 
-// and the stack segment
-    bzero (machine->mainMemory, size);
+/* Enlevé
+    // zero out the entire address space, to zero the unitialized data segment 
+    // and the stack segment
+     bzero (machine->mainMemory, size);
+*/
+
 // then, copy in the code and data segments into memory
     if (noffH.code.size > 0)
       {
