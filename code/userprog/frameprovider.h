@@ -5,6 +5,7 @@
 #include "bitmap.h"
 #include "synch.h"
 #include "machine.h"
+#include "time.h"
 
 
 class FrameProvider

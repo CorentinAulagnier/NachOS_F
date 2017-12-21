@@ -35,18 +35,18 @@ int
 FrameProvider::GetEmptyFrame()
 {
     semBitMap->P();
-    //int nbDePlein = (size-bitmap->NumClear()) ; 
 
-    int r = Random() % NumPhysPages;
+    RandomInit(time(NULL));
+    int r = Random() % (NumPhysPages);
     int nbTestTotal = size/2 ;
     int nbTest = 0;
     while(bitmap->Test(r) && nbTest < nbTestTotal){
-        r = Random() % NumPhysPages;
+        r = Random() % (NumPhysPages);
         nbTest ++;
     }
     if(nbTest >= nbTestTotal){
         r = bitmap->Find();
-        //printf("FIND ------------------ \n");
+
     } else {
         bitmap->Mark(r);
     }
