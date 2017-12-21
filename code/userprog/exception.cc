@@ -219,7 +219,7 @@ ExceptionHandler (ExceptionType which)
                 break;
             } case SC_ForkExec: {
                 printf("\nSC_ForkExec");
-                char* filename = (char *)machine->ReadRegister(4);
+                //char* filename = (char *)machine->ReadRegister(4);
                 //do_ForkExec()
                 break;
             } default: {

@@ -131,11 +131,17 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
     DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
+    int verif ;
 // first, set up the translation 
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++)
       {
-	  pageTable[i].virtualPage = frameprovider->GetEmptyFrame(); 
+      verif = frameprovider->GetEmptyFrame();
+      if(verif == -1){
+          printf("Erreur : plus de page physique disponibles\n"); // NE DOIS JAMAIS PASSER ICI
+          Exit(0);
+      }
+	  pageTable[i].virtualPage = verif; 
 	  // for now, virtual page # = phys page #
 	  pageTable[i].physicalPage = i;
 	  pageTable[i].valid = TRUE;
@@ -194,6 +200,9 @@ AddrSpace::~AddrSpace ()
 {
   // LB: Missing [] for delete
   // delete pageTable;
+  for (unsigned int i = 0; i < numPages; i++){
+    frameprovider->ReleaseFrame(pageTable[i].virtualPage);    
+  }
   delete [] pageTable;
   // End of modification
 
