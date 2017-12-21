@@ -17,6 +17,7 @@
 #include "filesys.h"
 #include "bitmap.h"
 #include "synch.h"
+#include "machine.h"
 #include "synchlistthread.h"
 
 #define UserStackSize		4 * 4 * 1024	// increase this as necessary!
@@ -61,6 +62,12 @@ class AddrSpace
      * Calcule l'offset de la pile du thread de numero numstack
      */
     int CalculOffsetStack(int nbPagePile, int pagesize, int numstack);
+    
+     /* Ajouté :
+     * //TODO à commenter
+     */
+    static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
+    int numBytes, int position, TranslationEntry *pageTable, unsigned numPages);
 
   private:
       TranslationEntry * pageTable;	// Assume linear page table translation
