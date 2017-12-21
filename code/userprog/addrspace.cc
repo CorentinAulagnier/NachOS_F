@@ -49,7 +49,7 @@ SwapHeader (NoffHeader * noffH)
 
 void
 AddrSpace::ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes,
-int position, TranslationEntry *pageTable, unsigned numPages)
+int position, TranslationEntry *newpageTable, unsigned numPages)
 {
     char buf[numBytes];
     int i;
@@ -61,9 +61,8 @@ int position, TranslationEntry *pageTable, unsigned numPages)
     TranslationEntry *savePageTable = machine->pageTable;
     unsigned int savePageTableSize = machine->pageTableSize;
     
-    machine->pageTable = pageTable;
+    machine->pageTable = newpageTable;
     machine->pageTableSize = numPages;
-    
 
     for(i = 0; i<size; i++)
         machine->WriteMem(virtualaddr+i, 1, buf[i]);
@@ -136,8 +135,9 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++)
       {
-	  pageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
-	  pageTable[i].physicalPage = frameprovider->GetEmptyFrame(); /** Changé */
+	  pageTable[i].virtualPage = frameprovider->GetEmptyFrame(); 
+	  // for now, virtual page # = phys page #
+	  pageTable[i].physicalPage = i;
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;
@@ -163,7 +163,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
         this->ReadAtVirtual(
                     executable, noffH.code.virtualAddr, 
                     noffH.code.size, noffH.code.inFileAddr, 
-                    pageTable, numPages);
+                    pageTable, numPages );
    
       }
     if (noffH.initData.size > 0)
