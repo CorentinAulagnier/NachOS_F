@@ -217,6 +217,11 @@ ExceptionHandler (ExceptionType which)
                 //printf(" tid %d\n",tid);
                 do_UserThreadJoin(tid);
                 break;
+            } case SC_ForkExec: {
+                printf("\nSC_ForkExec");
+                char* filename = (char *)machine->ReadRegister(4);
+                //do_ForkExec()
+                break;
             } default: {
                 printf("Unexpected user mode exception %d %d\n", which, type);
                 ASSERT(FALSE);
