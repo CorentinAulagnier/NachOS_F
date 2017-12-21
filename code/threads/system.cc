@@ -30,6 +30,10 @@ SynchDisk *synchDisk;
 #ifdef USER_PROGRAM		// requires either FILESYS or FILESYS_STUB
 Machine *machine;		// user program memory and registers
 SynchConsole *synchconsole;
+
+// Objet utile à la distribution des cadres physiques
+FrameProvider *frameprovider;
+
 //Semaphore *terminaison; // semaphore pour attendre la terminaison des threads
 #endif
 
@@ -161,6 +165,9 @@ Initialize (int argc, char **argv)
     machine = new Machine (debugUserProg);	// this must come first
     synchconsole = new SynchConsole(NULL, NULL);
     //terminaison = new Semaphore("terminaison", 1);
+
+    // Création de l'objet frameprovider
+    frameprovider = new FrameProvider(NumPhysPages);
 
 #endif
 
