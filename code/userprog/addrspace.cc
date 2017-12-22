@@ -44,12 +44,16 @@ SwapHeader (NoffHeader * noffH)
 }
 
 //----------------------------------------------------------------------
-// OpenFile::ReadAtVirtual
+// AddrSpace::ReadAtVirtual
+//      Lit dans le disque,
+//      Modifie les correspondances pages physiques/virtuelles(table des pages),
+//      Ecrit les informations dans les pages virtuelles.
+//      Restauration de la table des pages innitiales
 //----------------------------------------------------------------------
 
 void
 AddrSpace::ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes,
-int position, TranslationEntry *newpageTable, unsigned numPages)
+int position, TranslationEntry *pageTable, unsigned numPages)
 {
     char buf[numBytes]; //tampon mémoire
     int i;
@@ -59,14 +63,14 @@ int position, TranslationEntry *newpageTable, unsigned numPages)
     
     //si size n'est pas identique à numBytes: erreur
     if (size!=numBytes)
-        DEBUG('a',"Erreur : mauvaise taille ( size != numBytes )");
+        printf("Erreur : mauvaise taille ( size != numBytes )");
     
     //sauvegarde de la table des pages physiques
     TranslationEntry *savePageTable = machine->pageTable;
     unsigned int savePageTableSize = machine->pageTableSize;
     
     //chargement de la table des pages virtuelles
-    machine->pageTable = newpageTable;
+    machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
 
     //écriture dans la mémoire virtuelle depuis le tampon
