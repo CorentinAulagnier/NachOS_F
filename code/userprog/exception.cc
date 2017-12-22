@@ -25,6 +25,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "userthread.h"
+#include "forkexec.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -218,9 +219,9 @@ ExceptionHandler (ExceptionType which)
                 do_UserThreadJoin(tid);
                 break;
             } case SC_ForkExec: {
-                DEBUG('a', "\nSC_ForkExec");
-                //char* filename = (char *)machine->ReadRegister(4);
-                //do_ForkExec()
+                printf("\nSC_ForkExec");
+                char* filename = (char *)machine->ReadRegister(4);
+                do_ForkExec(filename);
                 break;
             } case SC_VerifExit: {
                 printf("\nSC_VerifExit");
