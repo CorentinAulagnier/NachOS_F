@@ -25,7 +25,7 @@
 __start:
 	jal	main
 	move	$4,$0		
-	jal	Exit	 /* if we return from main, exit(0) */
+	jal	VerifExit	 /* if we return from main, exit(0) */
 	.end __start
 
 /* -------------------------------------------------------------
@@ -208,6 +208,15 @@ ForkExec:
 	syscall
 	j	$31
 	.end ForkExec
+
+	.globl VerifExit
+	.ent	VerifExit
+VerifExit:
+	addiu $2,$0,SC_VerifExit
+	syscall
+	j	$31
+	.end VerifExit
+
 
 /* dummy function to keep gcc happy */
         .globl  __main

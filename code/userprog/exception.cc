@@ -222,6 +222,15 @@ ExceptionHandler (ExceptionType which)
                 //char* filename = (char *)machine->ReadRegister(4);
                 //do_ForkExec()
                 break;
+            } case SC_VerifExit: {
+                printf("\nSC_VerifExit");
+                /* Si c'est le dernier processus : on arrete tout */
+                if(machine->getNbProcessus() == 1){
+                    interrupt->Halt();
+                }else{
+                    machine->supprimerProcessus();
+                }
+                break;
             } default: {
                 DEBUG('a', "Unexpected user mode exception %d %d\n", which, type);
                 ASSERT(FALSE);

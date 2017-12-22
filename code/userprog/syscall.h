@@ -39,7 +39,7 @@
 #define SC_UserThreadExit   18
 #define SC_UserThreadJoin   19
 #define SC_ForkExec         20
-
+#define SC_VerifExit        21
 
 #ifdef IN_USER_MODE
 

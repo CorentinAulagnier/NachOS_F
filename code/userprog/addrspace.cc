@@ -106,6 +106,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
      * Initialisation de la bitmap
      */
     this->structNbThreads = new BitMap(MaxNbThread);
+    /* On marque 0 pour le thread principal*/
     this->structNbThreads->Mark(0);
     
      /* Ajouté :
@@ -151,7 +152,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
       verif = frameprovider->GetEmptyFrame();
       if(verif == -1){
           printf("Erreur : plus de page physique disponibles\n"); // NE DOIT JAMAIS PASSER ICI
-          Exit(0);
+          interrupt->Halt();
       }
 	  pageTable[i].virtualPage = verif; 
 	  // for now, virtual page # = phys page #

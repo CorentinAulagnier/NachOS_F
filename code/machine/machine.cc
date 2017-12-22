@@ -56,6 +56,12 @@ Machine::Machine(bool debug)
 {
     int i;
 
+    /* Ajouté : 
+     * Initialisation nbProcessus 
+     */
+    nbProcessus = 0;
+    semNbProcessus = new Semaphore("semNbProcessus",1);
+
     for (i = 0; i < NumTotalRegs; i++)
         registers[i] = 0;
     mainMemory = new char[MemorySize];
@@ -217,4 +223,32 @@ void Machine::WriteRegister(int num, int value)
 	// DEBUG('m', "WriteRegister %d, value %d\n", num, value);
 	registers[num] = value;
     }
+
+/* Ajouté :  
+ * Fonction qui lit nbProcessus en section critique
+ */
+int Machine::getNbProcessus(){
+    semNbProcessus->P();
+    int nb = nbProcessus;
+    semNbProcessus->V();
+    return nb;
+}
+
+/* Ajouté :  
+ * Fonction qui réalise nbProcessus++ en section critique
+ */
+void Machine::ajouterProcessus(){
+    semNbProcessus->P();
+    nbProcessus = nbProcessus + 1;
+    semNbProcessus->V();
+}
+
+/* Ajouté :  
+ * Fonction qui réalise nbProcessus-- en section critique
+ */
+void Machine::supprimerProcessus(){
+    semNbProcessus->P();
+    nbProcessus = nbProcessus-1 ;
+    semNbProcessus->V();
+}
 
