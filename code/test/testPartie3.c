@@ -21,6 +21,20 @@ void f3(void* s){
     UserThreadExit();
 }
 
+void f4(void* max) {
+    int i, count = 0;
+    for(i=0; i<(*(int*)max); i++) {
+        count += i;
+        count -= i;
+        count *= 33;
+        count /= 33;
+    }
+    PutString("\nSortie de f4:\n");
+    PutInt(count);
+    PutChar('\n');
+    UserThreadExit();
+}
+
 void test_simult() {
     PutString("***** Test n°1: Threads simultanés *****\n");
     PutString("2 threads lancés simultanément puis récupérés:");
@@ -59,15 +73,37 @@ void test_seq() {
     PutString("\n***** Fin Test n°2: Threads séquentiels *****\n\n");
 }
 
+void test_bcp() {
+    PutString("***** Test n°3: Threads très occupés  *****\n");
+    PutString("2 threads lancés avec une fonction très longue à exécuter:\n");
+
+    int i = 100000;
+    
+    int t1 = UserThreadCreate(&f4, &i);
+    int t2 = UserThreadCreate(&f4, &i);
+    
+    PutString("\ntid associé au thread exécutant f4 = ");
+    PutInt(t1);
+    PutString("\ntid associé au thread exécutant f4 = ");
+    PutInt(t2);
+    
+    UserThreadJoin(t1);
+    UserThreadJoin(t2);
+    
+    PutString("\n***** Fin Test n°3: Threads très occupés *****\n\n");
+
+}
+
 void test_trop_de_threads() {
-    PutString("***** Test n°3: Dépacement nombres de threads *****\n");
-    PutString("6 threads lancés simultanément, gestion du dépacement du nombre maximum de threads(fixé à 5)\n");
+    PutString("***** Test n°4: Dépacement nombres de threads *****\n");
+    PutString("5 threads lancés simultanément, gestion du dépacement du nombre maximum de threads fixé à 4");
+    PutString(" (5-1 pour le main)\n");
     int i;
-    int n[6] = {10,11,12,13,14,15};
-    int tids[6];
+    int n[5] = {10,11,12,13,14};
+    int tids[5];
     
     //vérification de la réussite de la création des threads
-    for(i = 0; i<6; i++) {
+    for(i = 0; i<5; i++) {
         tids[i] = UserThreadCreate(&f2, &n[i]);
         if(tids[i] == 0) {
             PutString("La création du ");
@@ -84,17 +120,17 @@ void test_trop_de_threads() {
     }
 
     //récupération des threads se terminant
-    for(i = 0; i<6; i++) {
+    for(i = 0; i<5; i++) {
         if(tids[i] != 0) {
             UserThreadJoin(tids[i]);
         }
     }
     
-    PutString("\n***** Fin Test n°3: Dépacement nombres de threads *****\n\n");
+    PutString("\n***** Fin Test n°4: Dépacement nombres de threads *****\n\n");
 }
 
 void test_robustesse() {
-    PutString("***** Test n°4: Robustesse *****\n");
+    PutString("***** Test n°5: Robustesse *****\n");
     
     PutString("Tentative de UserThreadExit hors d'un thread:");
     UserThreadExit();
@@ -102,7 +138,7 @@ void test_robustesse() {
     PutString("\n\nTentative de UserThreadJoin sur thread inexistant:");
     UserThreadJoin(5);
     
-    PutString("\n***** Fin Test n°4: Robustesse *****\n\n");
+    PutString("\n***** Fin Test n°5: Robustesse *****\n\n");
 }
 
 int main() {
@@ -110,8 +146,9 @@ int main() {
         PutString("Quel test voulez vous lancer ?\n");
         PutString("\t 1 - Threads simultanés\n");
         PutString("\t 2 - Threads séquentiels\n");
-        PutString("\t 3 - Dépacement nombres de threads\n");
-        PutString("\t 4 - Robustesse\n");
+        PutString("\t 3 - Beaucoup d'opérations\n");
+        PutString("\t 4 - Dépacement nombres de threads\n");
+        PutString("\t 5 - Robustesse\n");
         PutString("\t 0 - Exit\n");
         char c = GetChar();
         if(c=='\n') {
@@ -129,9 +166,12 @@ int main() {
                 test_seq();
                 break;
             case '3':
-                test_trop_de_threads();
+                test_bcp();
                 break;
             case '4':
+                test_trop_de_threads();
+                break;
+            case '5':
                 test_robustesse();
                 break;
             default :

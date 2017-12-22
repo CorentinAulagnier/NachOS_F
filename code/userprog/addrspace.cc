@@ -51,22 +51,29 @@ void
 AddrSpace::ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes,
 int position, TranslationEntry *newpageTable, unsigned numPages)
 {
-    char buf[numBytes];
+    char buf[numBytes]; //tampon mémoire
     int i;
+    //charge depuis la mémoire physique dans le tampon les numBytes octets depuis position
+    //récupère dans size le nombre d'octets lus
     int size = executable->ReadAt(buf,numBytes,position);
     
+    //si size n'est pas identique à numBytes: erreur
     if (size!=numBytes)
         DEBUG('a',"Erreur : mauvaise taille ( size != numBytes )");
     
+    //sauvegarde de la table des pages physiques
     TranslationEntry *savePageTable = machine->pageTable;
     unsigned int savePageTableSize = machine->pageTableSize;
     
+    //chargement de la table des pages virtuelles
     machine->pageTable = newpageTable;
     machine->pageTableSize = numPages;
 
+    //écriture dans la mémoire virtuelle depuis le tampon
     for(i = 0; i<size; i++)
         machine->WriteMem(virtualaddr+i, 1, buf[i]);
     
+    //restauration de la table des pages physiques
     machine->pageTable = savePageTable;
     machine->pageTableSize = savePageTableSize;
 }
@@ -95,6 +102,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
      * Initialisation de la bitmap
      */
     this->structNbThreads = new BitMap(MaxNbThread);
+    this->structNbThreads->Mark(0);
     
      /* Ajouté :
      * Initialisation de la liste des threads
