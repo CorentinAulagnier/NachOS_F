@@ -138,7 +138,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
       {
       verif = frameprovider->GetEmptyFrame();
       if(verif == -1){
-          printf("Erreur : plus de page physique disponibles\n"); // NE DOIS JAMAIS PASSER ICI
+          printf("Erreur : plus de page physique disponibles\n"); // NE DOIT JAMAIS PASSER ICI
           Exit(0);
       }
 	  pageTable[i].virtualPage = verif; 

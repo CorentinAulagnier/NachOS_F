@@ -84,7 +84,7 @@ void do_UserThreadJoin(int tid) {
     itemThread* it = currentThread->space->listThread->Find(tid);
     if (it != NULL)  {
         it->semThread->P();
-        printf("Le thread %d s'est bien terminé.\n",it->tid);
+        DEBUG('a', "Le thread %d s'est bien terminé.\n",it->tid);
         free(currentThread->space->listThread->Remove(it->tid));
         //pour le debug : etat de la liste
         //printList(currentThread->space->listThread);

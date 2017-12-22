@@ -136,13 +136,13 @@ ExceptionHandler (ExceptionType which)
                 break;
             }
             case SC_PutChar: {
-                //printf("SC_PutChar\n");
+                //DEBUG('a', "SC_PutChar\n");
                 char c = (char) machine->ReadRegister(4);
                 synchconsole->SynchPutChar(c);
                 break;
             }
             case SC_PutString: {
-                //printf("SC_PutString\n");
+                //DEBUG('a', "SC_PutString\n");
                 int add = (int) machine->ReadRegister(4); // @ de la chaine
                 
                 char buffer[MAX_BUFFER_SIZE];
@@ -176,12 +176,12 @@ ExceptionHandler (ExceptionType which)
                 positionBuffer = 0;
                 break;
             } case SC_GetChar: {
-                //printf("SC_GetChar\n");
+                //DEBUG('a', "SC_GetChar\n");
                 char c = synchconsole->SynchGetChar();
                 machine->WriteRegister(2, (int)c);
                 break;
             } case SC_GetString: {
-                //printf("SC_GetString\n");
+                //DEBUG('a', "SC_GetString\n");
                 int word = machine->ReadRegister(4);
                 int taille = machine->ReadRegister(5);
                 char s[taille];
@@ -189,17 +189,17 @@ ExceptionHandler (ExceptionType which)
                 writeStringToMachine(s, word, taille);
                 break;
             } case SC_GetInt: {
-                //printf("SC_GetInt\n");
+                //DEBUG('a', "SC_GetInt\n");
                 int n = synchconsole->SynchGetInt();
                 machine->WriteRegister(2, n);
                 break;
             } case SC_PutInt: {
-                //printf("SC_PutInt\n");
+                //DEBUG('a', "SC_PutInt\n");
                 int n = machine->ReadRegister(4);
                 synchconsole->SynchPutInt(n);
                 break;
             } case SC_UserThreadCreate: {
-                //printf("\nSC_UserThreadCreate\n");
+                //DEBUG('a', "\nSC_UserThreadCreate\n");
                 int func = (int)machine->ReadRegister(4); // @ de la fonction
                 int add = (int)machine->ReadRegister(5); // @ espace mem
                 
@@ -208,22 +208,22 @@ ExceptionHandler (ExceptionType which)
                 machine->WriteRegister(2, retour);
                 break;
             } case SC_UserThreadExit: {
-                //printf("\nSC_UserThreadExit\n");
+                //DEBUG('a', "\nSC_UserThreadExit\n");
                 do_UserThreadExit();
                 break;
             } case SC_UserThreadJoin: {
-                //printf("\nSC_UserThreadJoin");
+                //DEBUG('a', "\nSC_UserThreadJoin");
                 int tid = (int)machine->ReadRegister(4); // @ de la fonction
                 //printf(" tid %d\n",tid);
                 do_UserThreadJoin(tid);
                 break;
             } case SC_ForkExec: {
-                printf("\nSC_ForkExec");
+                DEBUG('a', "\nSC_ForkExec");
                 //char* filename = (char *)machine->ReadRegister(4);
                 //do_ForkExec()
                 break;
             } default: {
-                printf("Unexpected user mode exception %d %d\n", which, type);
+                DEBUG('a', "Unexpected user mode exception %d %d\n", which, type);
                 ASSERT(FALSE);
             }
         }
