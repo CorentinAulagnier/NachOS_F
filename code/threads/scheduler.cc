@@ -72,15 +72,7 @@ Thread *
 Scheduler::FindNextToRun ()
 {
     Thread * th = (Thread *) readyList->Remove();
-
-    #ifdef USER_PROGRAM
-
-    while(th!=NULL && th->space == NULL){
-        th->Finish();
-        th = (Thread *) readyList->Remove();
-    }
-    #endif
-
+    
     return th;
 }
 
@@ -120,6 +112,14 @@ Scheduler::Run (Thread * nextThread)
     // had an undetected stack overflow
 
     currentThread = nextThread;	// switch to the next thread
+
+    #ifdef USER_PROGRAM
+
+    if(currentThread!=NULL && currentThread->space == NULL && currentThread->estProcessus ==false){
+        currentThread->Finish();
+    }
+    #endif
+
     currentThread->setStatus (RUNNING);	// nextThread is now running
 
     DEBUG ('t', "Switching from thread \"%s\" to thread \"%s\"\n",

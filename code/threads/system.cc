@@ -162,6 +162,7 @@ Initialize (int argc, char **argv)
     CallOnUserAbort (Cleanup);	// if user hits ctl-C
 
 #ifdef USER_PROGRAM
+    currentThread->estProcessus = true;
     machine = new Machine (debugUserProg);	// this must come first
     synchconsole = new SynchConsole(NULL, NULL);
     //terminaison = new Semaphore("terminaison", 1);
