@@ -115,6 +115,11 @@ class Thread
     {
 	printf ("%s, ", name);
     }
+    
+    /* Ajouté :
+     * Identifiant du thread
+     */
+    int tid;
 
   private:
     // some of the private data for this class is listed above
@@ -155,11 +160,6 @@ class Thread
      * Numéro de la pile du thread dans l'addrSpace commun
      */
     int numStackInAddrSpace;
-
-    /* Ajouté :
-     * Identifiant du thread
-     */
-    int tid;
 
     bool estProcessus; // vrai si le thread est un processus 
     
