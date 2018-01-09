@@ -1,8 +1,8 @@
 #include "syscall.h"
-#define THIS "aaa"
-#define THAT "bbb"
+#define THIS "a"
+#define THAT "b"
 
-const int N = 10; // Choose it large enough!
+//const int N = 5; // Choose it large enough!
 
 void puts(char *s) {
     int i = 0;
@@ -11,12 +11,16 @@ void puts(char *s) {
 
 void f(void *s) {
     int i;
-    for (i = 0; i < N; i++)
+    for (i = 0; i < 5; i++)
         puts((char*)s);
 }
 
 int main() {
+   //int d = UserThreadCreate(f, (void *) THIS);
     UserThreadCreate(f, (void *) THIS);
     f((void*) THAT);
-    Halt();
+
+   //UserThreadJoin(d);
+    return 1;
+    //Halt();
 }

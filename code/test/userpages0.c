@@ -17,5 +17,7 @@ int main() {
 
     UserThreadJoin(t1);
     UserThreadJoin(t2);
-    Halt();
+
+	return 1;
+
 }
