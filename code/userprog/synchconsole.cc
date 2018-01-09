@@ -75,7 +75,7 @@ void SynchConsole::EcritureChaine(char *s) {
 
 void SynchConsole::SynchPutChar(const char ch) {
     ecriture->P();
-    
+
     WriteChar(ch);
     
     ecriture->V();
