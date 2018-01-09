@@ -5,6 +5,8 @@ void StartProcess(int arg) {
     currentThread->space->InitRegisters();
     currentThread->space->RestoreState();
 
+
+
     machine->Run();
 }
 
@@ -13,8 +15,6 @@ int do_ForkExec (char *s)
 {
     OpenFile *executable = fileSystem->Open (s);
     AddrSpace *space;
-
-
 
     if (executable == NULL) {
         printf ("Unable to open file %s\n", s);
@@ -28,15 +28,18 @@ int do_ForkExec (char *s)
         printf("Impossible de créer un nouveau processus\n");
         return -1;
     }
-
-    /* nbProcessus = nbProcessus +1 */
-    machine->ajouterProcessus();
     
     delete executable;
 
+    /* nbProcessus = nbProcessus +1 */
+    machine->ajouterProcessus();
+
     // Creation du nouveau thread main du nouveau processus
     Thread * main = new Thread(s);
+    main->estProcessus = true;
+    main->numStackInAddrSpace = 0;
     main->space = space;
+    main->space->nbThreads ++;
 
     main->Fork(StartProcess, 0);
 

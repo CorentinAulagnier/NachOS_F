@@ -71,7 +71,17 @@ Scheduler::ReadyToRun (Thread * thread)
 Thread *
 Scheduler::FindNextToRun ()
 {
-    return (Thread *) readyList->Remove ();
+    Thread * th = (Thread *) readyList->Remove();
+
+    #ifdef USER_PROGRAM
+
+    while(th!=NULL && th->space == NULL){
+        th->Finish();
+        th = (Thread *) readyList->Remove();
+    }
+    #endif
+
+    return th;
 }
 
 //----------------------------------------------------------------------

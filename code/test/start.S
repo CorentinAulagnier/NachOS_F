@@ -25,7 +25,7 @@
 __start:
 	jal	main
 	move	$4,$0		
-	jal	VerifExit	 /* if we return from main, exit(0) */
+	jal	UserThreadExit	 /* if we return from main, exit(0) */
 	.end __start
 
 /* -------------------------------------------------------------
@@ -181,6 +181,7 @@ PutInt:
 	.ent	UserThreadCreate
 UserThreadCreate:
 	addiu $2,$0,SC_UserThreadCreate
+    addiu $6,$0,UserThreadExit
 	syscall
 	j	$31
 	.end UserThreadCreate
@@ -208,14 +209,6 @@ ForkExec:
 	syscall
 	j	$31
 	.end ForkExec
-
-	.globl VerifExit
-	.ent	VerifExit
-VerifExit:
-	addiu $2,$0,SC_VerifExit
-	syscall
-	j	$31
-	.end VerifExit
 
 
 /* dummy function to keep gcc happy */

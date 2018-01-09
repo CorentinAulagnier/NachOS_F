@@ -99,9 +99,12 @@ int position, TranslationEntry *pageTable, unsigned numPages)
 
 AddrSpace::AddrSpace (OpenFile * executable)
 {
+
     NoffHeader noffH;
     unsigned int i, size;
 
+
+	this->tokill = false;
     /* Ajouté :
      * Initialisation de la bitmap
      */
@@ -154,9 +157,10 @@ AddrSpace::AddrSpace (OpenFile * executable)
           printf("Erreur : plus de page physique disponibles\n"); // NE DOIT JAMAIS PASSER ICI
           interrupt->Halt();
       }
-	  pageTable[i].virtualPage = verif; 
+
+	  pageTable[i].virtualPage = i; 
 	  // for now, virtual page # = phys page #
-	  pageTable[i].physicalPage = i;
+	  pageTable[i].physicalPage = verif;
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;
@@ -214,7 +218,7 @@ AddrSpace::~AddrSpace ()
   // LB: Missing [] for delete
   // delete pageTable;
   for (unsigned int i = 0; i < numPages; i++){
-    frameprovider->ReleaseFrame(pageTable[i].virtualPage);    
+    frameprovider->ReleaseFrame(pageTable[i].physicalPage);    
   }
   delete [] pageTable;
   // End of modification
@@ -222,6 +226,7 @@ AddrSpace::~AddrSpace ()
     /* Ajouté :
      * Destruction des attributs rajoutés
      */
+	delete listThread;
     delete structNbThreads;
     delete semNbThread;
 }

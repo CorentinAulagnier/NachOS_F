@@ -24,6 +24,7 @@
 void
 StartProcess (char *filename)
 {
+
     OpenFile *executable = fileSystem->Open (filename);
     AddrSpace *space;
 
@@ -34,8 +35,13 @@ StartProcess (char *filename)
       }
     space = new AddrSpace (executable);
     currentThread->space = space;
+    currentThread->space->nbThreads ++;
+    currentThread->estProcessus = true;
 
     delete executable;		// close file
+
+    /* nbProcessus = nbProcessus +1 */
+    machine->ajouterProcessus();
 
     space->InitRegisters ();	// set the initial register values
     space->RestoreState ();	// load page table register

@@ -60,13 +60,26 @@ void vider(char* buff, int size){
 // pour garantir la sécurité du système.
 //----------------------------------------------------------------------
 
-void copyStringFromMachine(int from, char *to, unsigned size) {
-    char *p = machine->mainMemory;
+char * copyStringFromMachine(int from, unsigned size) {
+	
+	int p;
+	char * buf = new char[size];
     unsigned int i;
-    for(i=0; i<size; i++){
-        to[i] = p[from+i];
+    for(i=0; i<size-1; i++){
+	    bool b = machine->ReadMem(from+i,1, &p);
+
+        if(b == FALSE){
+            printf("false dans copy... !!!!!!!!!! \n");
+            break;
+        }
+		if((char)p == '\0'){
+			break;
+		}
+
+        buf[i] = (char)p;
     }
-    to[i] = '\0';
+    buf[i] = '\0';
+	return buf;
 }
 
 //----------------------------------------------------------------------
@@ -79,11 +92,20 @@ void copyStringFromMachine(int from, char *to, unsigned size) {
 
 void writeStringToMachine(char * from, int to, unsigned size) {
     unsigned int i;
-    char *p = machine->mainMemory;
-    for(i=0; i<size; i++){
-        p[to+i] = from[i];
+    //char *p = machine->mainMemory;
+    for(i=0; i<size-1; i++){
+        //p[to+i] = from[i];
+        bool b = machine->WriteMem(to+i,1, from[i]);
+
+        if(b == FALSE){
+            printf("false dans Write... !!!!!!!!!!\n");
+            break;
+        }
+
+		if(from[i]=='\0') {
+			break;
+		}
     }
-    p[to+i] = '\0';
 }
 
 //----------------------------------------------------------------------
@@ -144,37 +166,16 @@ ExceptionHandler (ExceptionType which)
             }
             case SC_PutString: {
                 //DEBUG('a', "SC_PutString\n");
-                int add = (int) machine->ReadRegister(4); // @ de la chaine
+                int add = machine->ReadRegister(4); // @ de la chaine
                 
-                char buffer[MAX_BUFFER_SIZE];
-                int positionBuffer = 0;
-                
-                char * s = machine->mainMemory;
-                int taille = chercherTaille(s, add);
+                char * s = copyStringFromMachine(add, MAX_STRING_SIZE);
 
-                char word[taille]; 
-                vider(buffer, MAX_BUFFER_SIZE);
-                copyStringFromMachine(add, word, taille);
 
-                int i = 0;
-                while(i < taille) {
-
-                    // Buffer plein, on l'ecrit et on le vide
-                    if (positionBuffer == MAX_BUFFER_SIZE) {
-                        synchconsole->SynchPutString(buffer);
-                        vider(buffer, MAX_BUFFER_SIZE);
-                        positionBuffer = 0;
-                    }
-                    // Ajout du s dans le buffer lettre par lettre
-                    buffer[positionBuffer] = word[i];
-                    positionBuffer++;
-                    i++;
-                }
 
                 // Ecriture termine, on ecrit et on vide le buffer
-                synchconsole->SynchPutString(buffer);
-                vider(buffer, MAX_BUFFER_SIZE);
-                positionBuffer = 0;
+                synchconsole->SynchPutString(s);
+
+
                 break;
             } case SC_GetChar: {
                 //DEBUG('a', "SC_GetChar\n");
@@ -203,8 +204,10 @@ ExceptionHandler (ExceptionType which)
                 //DEBUG('a', "\nSC_UserThreadCreate\n");
                 int func = (int)machine->ReadRegister(4); // @ de la fonction
                 int add = (int)machine->ReadRegister(5); // @ espace mem
-                
-                int retour = do_UserThreadCreate(func, add);
+
+                int fct_fin = (int)machine->ReadRegister(6); // @ espace mem
+
+                int retour = do_UserThreadCreate(func, add, fct_fin);
 
                 machine->WriteRegister(2, retour);
                 break;
@@ -219,19 +222,16 @@ ExceptionHandler (ExceptionType which)
                 do_UserThreadJoin(tid);
                 break;
             } case SC_ForkExec: {
-                printf("\nSC_ForkExec");
-                char* filename = (char *)machine->ReadRegister(4);
-                do_ForkExec(filename);
+                printf("\nSC_ForkExec\n");
+
+                int add = machine->ReadRegister(4); // @ de la chaine
+                
+                char *filename = copyStringFromMachine(add, MAX_STRING_SIZE);
+            	int retour = do_ForkExec(filename);
+
+				machine->WriteRegister(2,retour);
                 break;
-            } case SC_VerifExit: {
-                printf("\nSC_VerifExit");
-                /* Si c'est le dernier processus : on arrete tout */
-                if(machine->getNbProcessus() == 1){
-                    interrupt->Halt();
-                }else{
-                    machine->supprimerProcessus();
-                }
-                break;
+           
             } default: {
                 DEBUG('a', "Unexpected user mode exception %d %d\n", which, type);
                 ASSERT(FALSE);

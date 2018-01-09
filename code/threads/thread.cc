@@ -44,6 +44,8 @@ int getNewTid() {
 
 Thread::Thread (const char *threadName)
 {
+
+
     name = threadName;
     stackTop = NULL;
     stack = NULL;
@@ -58,7 +60,7 @@ Thread::Thread (const char *threadName)
      * Initialisation de l'identifiant
      */
     tid = getNewTid();
-    
+
     // FBT: Need to initialize special registers of simulator to 0
     // in particular LoadReg or it could crash when switching
     // user threads.
@@ -86,6 +88,14 @@ Thread::~Thread ()
     ASSERT (this != currentThread);
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
+
+#ifdef USER_PROGRAM
+
+	if(this->space != NULL && this->space->tokill == true){
+		delete this->space;
+	}
+#endif
+
 }
 
 //----------------------------------------------------------------------
@@ -124,7 +134,9 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     // an already running program, as in the "fork" Unix system call. 
     
     // LB: Observe that currentThread->space may be NULL at that time.
-    this->space = currentThread->space;
+	if(this->space == NULL) {
+    	this->space = currentThread->space;
+	}
 
 #endif // USER_PROGRAM
 
@@ -132,7 +144,7 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     scheduler->ReadyToRun (this);	// ReadyToRun assumes that interrupts 
     // are disabled!
     (void) interrupt->SetLevel (oldLevel);
-    
+
 }
 
 //----------------------------------------------------------------------

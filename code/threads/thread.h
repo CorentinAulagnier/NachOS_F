@@ -144,6 +144,12 @@ class Thread
      * Pour pouvoir faire passer arg dans userThread.cc
      */
     int argUser;
+
+    /* Ajouté :
+     * Pour pouvoir faire passer l'adresse de la fonction 
+     * dans laquelle va le thread lorsqu'il se termine
+     */
+    int fonction_retour;
     
     /* Ajouté :
      * Numéro de la pile du thread dans l'addrSpace commun
@@ -154,6 +160,8 @@ class Thread
      * Identifiant du thread
      */
     int tid;
+
+    bool estProcessus; // vrai si le thread est un processus 
     
     void SaveUserState ();	// save user-level register state
     void RestoreUserState ();	// restore user-level register state

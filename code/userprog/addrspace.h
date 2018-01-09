@@ -39,6 +39,11 @@ class AddrSpace
     void RestoreState ();	// info on a context switch 
 
     /* Ajouté :
+     * Booléen définissant si l'espace d'adressage doit être détruit ou non
+     */
+	bool tokill;
+
+    /* Ajouté :
      * Bitmap gérant le nombre de threads d'un processus
      */
     BitMap* structNbThreads;
