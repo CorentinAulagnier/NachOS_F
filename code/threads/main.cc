@@ -61,6 +61,7 @@ extern void Print (char *file), PerformanceTest (void);
 extern void StartProcess (char *file), ConsoleTest (char *in, char *out);
 extern void SynchConsoleTest (char *in, char *out);
 extern void MailTest (int networkID);
+extern void Boucle (int farAddr);
 
 //----------------------------------------------------------------------
 // main
@@ -167,7 +168,15 @@ main (int argc, char **argv)
 		Delay (2);	// delay for 2 seconds
 		// to give the user time to 
 		// start up another nachos
+		
 		MailTest (atoi (*(argv + 1)));
+		
+		/* Boucle N machines */
+		/*
+        int N = atoi (*(argv + 1));
+		Boucle ((postOffice->GetAdd() + 1 ) % N);
+		*/
+		
 		argCount = 2;
 	    }
 #endif // NETWORK

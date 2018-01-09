@@ -103,36 +103,62 @@ Semaphore::V ()
 // the test case in the network assignment won't work!
 Lock::Lock (const char *debugName)
 {
+    name = debugName;
+    semLock = new Semaphore("semLock",1);
+    holder = 0;
 }
 
 Lock::~Lock ()
 {
+    delete name;
+    delete semLock;
 }
+
 void
 Lock::Acquire ()
 {
+    semLock->P();
+    holder = currentThread->tid;
 }
+
 void
 Lock::Release ()
 {
+    holder = 0;
+    semLock->V();
+}
+
+bool Lock::isHeldByCurrentThread ()
+{
+    return currentThread->tid == holder;
+    return true;
 }
 
 Condition::Condition (const char *debugName)
 {
+    name = debugName;
+    semCond = new Semaphore("semCond",1);
+    
 }
 
 Condition::~Condition ()
 {
+    delete name;
 }
 void
 Condition::Wait (Lock * conditionLock)
 {
-    ASSERT (FALSE);
+    if(conditionLock->isHeldByCurrentThread()) {
+        conditionLock->Release();
+        semCond->P();
+        conditionLock->Acquire();
+    }
 }
 
 void
 Condition::Signal (Lock * conditionLock)
 {
+    semCond->V();
 }
 void
 Condition::Broadcast (Lock * conditionLock)

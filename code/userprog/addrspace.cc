@@ -57,7 +57,7 @@ int position, TranslationEntry *pageTable, unsigned numPages)
 {
     char buf[numBytes]; //tampon mémoire
     int i;
-    //charge depuis la mémoire physique dans le tampon les numBytes octets depuis position
+    //lit dans un fichier numBytes octets depuis position et les copie dans le tampon
     //récupère dans size le nombre d'octets lus
     int size = executable->ReadAt(buf,numBytes,position);
     
