@@ -62,6 +62,8 @@ extern void StartProcess (char *file), ConsoleTest (char *in, char *out);
 extern void SynchConsoleTest (char *in, char *out);
 extern void MailTest (int networkID);
 extern void Boucle (int farAddr);
+extern void EnvoiTest (int farAddr);
+extern void ReceptionTest (int farAddr);
 
 //----------------------------------------------------------------------
 // main
@@ -80,18 +82,21 @@ extern void Boucle (int farAddr);
 int
 main (int argc, char **argv)
 {
+
     int argCount;		// the number of arguments 
     // for a particular command
 
     DEBUG ('t', "Entering main");
+          		printf(" AVANT Initialize");
     (void) Initialize (argc, argv);
-
+          		printf(" Apres Initialize");
 #ifdef THREADS
     ThreadTest ();
 #endif
 
     for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount)
       {
+      		printf(" *argv = %s\n",*argv);
 	  argCount = 1;
 	  if (!strcmp (*argv, "-z"))	// print copyright
 	      printf ("%s", copyright);
@@ -168,15 +173,28 @@ main (int argc, char **argv)
 		Delay (2);	// delay for 2 seconds
 		// to give the user time to 
 		// start up another nachos
-		
+        
+
+            /* Test mail simple */
+		/*
 		MailTest (atoi (*(argv + 1)));
+		*/
 		
-		/* Boucle N machines */
+		    /* Boucle N machines */
 		/*
         int N = atoi (*(argv + 1));
 		Boucle ((postOffice->GetAdd() + 1 ) % N);
 		*/
-		
+		printf("(atoi (*(argv - 1))) = %d\n",(atoi (*(argv - 1))));
+		    /* Test Protocole transport */
+        if ((atoi (*(argv - 1))) == 0) {
+            EnvoiTest (atoi (*(argv + 1)));
+        } else if ((atoi (*(argv - 1))) == 1) {
+            ReceptionTest (atoi (*(argv + 1)));
+        }
+        
+        
+        
 		argCount = 2;
 	    }
 #endif // NETWORK

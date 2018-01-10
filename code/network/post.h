@@ -46,6 +46,7 @@ class MailHeader {
     MailBoxAddress from;	// Mail box to reply to
     unsigned length;		// Bytes of message data (excluding the 
 				// mail header)
+    int numPaquet;
 };
 
 // Maximum "payload" -- real data -- that can included in a single message
@@ -87,6 +88,7 @@ class MailBox {
    				// Atomically get a message out of the 
 				// mailbox (and wait if there is no message 
 				// to get!)
+    SynchList* GetMessages();
   private:
     SynchList *messages;	// A mailbox is just a list of arrived messages
 };
@@ -129,6 +131,8 @@ class PostOffice {
 				// off of network (i.e., time to call 
 				// PostalDelivery)
     NetworkAddress GetAdd();
+    int GetNumBoxes();
+    MailBox* GetBox(int num);
     
   private:
     Network *network;		// Physical network connection

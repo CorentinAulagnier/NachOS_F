@@ -350,3 +350,21 @@ PostOffice::GetAdd()
     return netAddr;
 }
 
+
+int PostOffice::GetNumBoxes(){
+    return numBoxes;
+}
+
+MailBox* PostOffice::GetBox(int num){
+    return &boxes[num];
+}
+
+SynchList* MailBox::GetMessages(){
+    return this->messages;
+}
+
+
+
+
+
+
