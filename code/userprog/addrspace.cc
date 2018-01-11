@@ -105,12 +105,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 
 	this->tokill = false;
-    /* Ajouté :
-     * Initialisation de la bitmap
-     */
-    this->structNbThreads = new BitMap(MaxNbThread);
-    /* On marque 0 pour le thread principal*/
-    this->structNbThreads->Mark(0);
+
     
      /* Ajouté :
      * Initialisation de la liste des threads
@@ -140,22 +135,32 @@ AddrSpace::AddrSpace (OpenFile * executable)
     numPages = divRoundUp (size, PageSize);
     size = numPages * PageSize;
 
+    /* Ajouté :
+     * Initialisation de la bitmap
+     */
+    this->structNbThreads = new BitMap(MaxNbThread);
+    /* On marque 0 pour le thread principal*/
+    this->structNbThreads->Mark(0);
+
     ASSERT (numPages <= NumPhysPages);	// check we're not trying
     // to run anything too big --
     // at least until we have
     // virtual memory
+
+    if((unsigned int)frameprovider->NumAvailFrame() < numPages){
+        return;
+    }
 
     DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 	   numPages, size);
     int verif ;
 // first, set up the translation 
     pageTable = new TranslationEntry[numPages];
-    for (i = 0; i < numPages; i++)
-      {
+    for (i = 0; i < numPages; i++) {
       verif = frameprovider->GetEmptyFrame();
       if(verif == -1){
-          printf("Erreur : plus de page physique disponibles\n"); // NE DOIT JAMAIS PASSER ICI
-          interrupt->Halt();
+          printf("Erreur : il fallait faire une fonction bébé chien \n"); // NE DOIT JAMAIS PASSER ICI
+          return;
       }
 
 	  pageTable[i].virtualPage = i; 
@@ -167,7 +172,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	  pageTable[i].readOnly = FALSE;	// if the code segment was entirely on 
 	  // a separate page, we could set its 
 	  // pages to be read-only
-      }
+    }
 
 /* Enlevé
     // zero out the entire address space, to zero the unitialized data segment 

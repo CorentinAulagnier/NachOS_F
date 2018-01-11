@@ -21,8 +21,8 @@
 #include "synchlistthread.h"
 
 #define UserStackSize		4 * 4 * 1024	// increase this as necessary!
-#define MaxNbThread		5	// Nombre max de thread par processus
 #define NbPagesPileThread		3	// Nombre de page pour la pile de chaque thread
+#define MaxNbThread		(UserStackSize/(NbPagesPileThread*PageSize))	// Nombre max de thread par processus
 
 class AddrSpace
 {

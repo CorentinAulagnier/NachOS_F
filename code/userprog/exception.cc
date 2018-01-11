@@ -159,81 +159,79 @@ ExceptionHandler (ExceptionType which)
                 break;
             }
             case SC_PutChar: {
-                //DEBUG('a', "SC_PutChar\n");
+                DEBUG('a', "SC_PutChar\n");
                 char c = (char) machine->ReadRegister(4);
                 synchconsole->SynchPutChar(c);
                 break;
             }
             case SC_PutString: {
-                //DEBUG('a', "SC_PutString\n");
+                DEBUG('a', "SC_PutString\n");
                 int add = machine->ReadRegister(4); // @ de la chaine
-                
+      
                 char * s = copyStringFromMachine(add, MAX_STRING_SIZE);
-
-
-
-                // Ecriture termine, on ecrit et on vide le buffer
                 synchconsole->SynchPutString(s);
 
 
                 break;
             } case SC_GetChar: {
-                //DEBUG('a', "SC_GetChar\n");
+                DEBUG('t', "SC_GetChar\n");
                 char c = synchconsole->SynchGetChar();
                 machine->WriteRegister(2, (int)c);
                 break;
+
             } case SC_GetString: {
-                //DEBUG('a', "SC_GetString\n");
+                DEBUG('t', "SC_GetString\n");
                 int word = machine->ReadRegister(4);
                 int taille = machine->ReadRegister(5);
                 char s[taille];
                 synchconsole->SynchGetString(s, taille);
                 writeStringToMachine(s, word, taille);
                 break;
+
             } case SC_GetInt: {
-                //DEBUG('a', "SC_GetInt\n");
+                DEBUG('t', "SC_GetInt\n");
                 int n = synchconsole->SynchGetInt();
                 machine->WriteRegister(2, n);
                 break;
+
             } case SC_PutInt: {
-                //DEBUG('a', "SC_PutInt\n");
+                DEBUG('t', "SC_PutInt\n");
                 int n = machine->ReadRegister(4);
                 synchconsole->SynchPutInt(n);
                 break;
+
             } case SC_UserThreadCreate: {
-                //DEBUG('a', "\nSC_UserThreadCreate\n");
+                DEBUG('t', "\nSC_UserThreadCreate\n");
                 int func = (int)machine->ReadRegister(4); // @ de la fonction
                 int add = (int)machine->ReadRegister(5); // @ espace mem
-
                 int fct_fin = (int)machine->ReadRegister(6); // @ espace mem
-
                 int retour = do_UserThreadCreate(func, add, fct_fin);
 
                 machine->WriteRegister(2, retour);
                 break;
+
             } case SC_UserThreadExit: {
-                //DEBUG('a', "\nSC_UserThreadExit\n");
+                DEBUG('t', "\nSC_UserThreadExit\n");
                 do_UserThreadExit();
                 break;
-            } case SC_UserThreadJoin: {
-                //DEBUG('a', "\nSC_UserThreadJoin");
-                int tid = (int)machine->ReadRegister(4); // @ de la fonction
-                //printf(" tid %d\n",tid);
-                do_UserThreadJoin(tid);
-                break;
-            } case SC_ForkExec: {
-                printf("\nSC_ForkExec\n");
 
+            } case SC_UserThreadJoin: {
+                DEBUG('t', "\nSC_UserThreadJoin");
+                int tid = (int)machine->ReadRegister(4); // @ de la fonction
+                int retour = do_UserThreadJoin(tid);
+                machine->WriteRegister(2, retour);
+                break;
+
+            } case SC_ForkExec: {
+                DEBUG('t',"\nSC_ForkExec\n");
                 int add = machine->ReadRegister(4); // @ de la chaine
-                
                 char *filename = copyStringFromMachine(add, MAX_STRING_SIZE);
             	int retour = do_ForkExec(filename);
-
 				machine->WriteRegister(2,retour);
                 break;
            
             } default: {
-                DEBUG('a', "Unexpected user mode exception %d %d\n", which, type);
+                DEBUG('t', "Unexpected user mode exception %d %d\n", which, type);
                 ASSERT(FALSE);
             }
         }

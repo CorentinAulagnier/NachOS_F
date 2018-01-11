@@ -52,6 +52,8 @@ Thread::Thread (const char *threadName)
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
     space = NULL;
+    type = 3; ////est un thread_du_systeme de base, reecrit si autre cas
+    listeThread = new List;
 
     /*** NULL par défaut -> Peut eventuellement buguer *****************************************/
     argUser = (int)NULL;
@@ -236,6 +238,7 @@ Thread::Yield ()
     DEBUG ('t', "Yielding thread \"%s\"\n", getName ());
 
     nextThread = scheduler->FindNextToRun ();
+    
     if (nextThread != NULL)
       {
       scheduler->ReadyToRun (this);

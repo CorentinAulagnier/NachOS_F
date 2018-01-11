@@ -175,7 +175,7 @@ void UserThreadExit();
 
 /* UserThreadJoin wait the thread tid. 
  */
-void UserThreadJoin(int tid);
+int UserThreadJoin(int tid);
 
 /*ForkExec prend un nom de fichier exécutable et l'exécute sur un thread système
  */
