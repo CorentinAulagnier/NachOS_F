@@ -159,8 +159,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
     for (i = 0; i < numPages; i++) {
       verif = frameprovider->GetEmptyFrame();
       if(verif == -1){
-          printf("Erreur : plus de page physique disponibles\n"); // NE DOIT JAMAIS PASSER ICI
-          interrupt->Halt();
+          printf("Erreur : il fallait faire une fonction bébé chien \n"); // NE DOIT JAMAIS PASSER ICI
+          return;
       }
 
 	  pageTable[i].virtualPage = i; 
