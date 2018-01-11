@@ -36,7 +36,7 @@ int do_ForkExec (char *s)
 
     // Creation du nouveau thread main du nouveau processus
     Thread * main = new Thread(s);
-    main->estProcessus = true;
+    main->type = 1; //est un processus
     main->numStackInAddrSpace = 0;
     main->space = space;
     main->space->nbThreads ++;

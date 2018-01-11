@@ -87,16 +87,13 @@ main (int argc, char **argv)
     // for a particular command
 
     DEBUG ('t', "Entering main");
-          		printf(" AVANT Initialize");
     (void) Initialize (argc, argv);
-          		printf(" Apres Initialize");
 #ifdef THREADS
     ThreadTest ();
 #endif
 
     for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount)
       {
-      		printf(" *argv = %s\n",*argv);
 	  argCount = 1;
 	  if (!strcmp (*argv, "-z"))	// print copyright
 	      printf ("%s", copyright);

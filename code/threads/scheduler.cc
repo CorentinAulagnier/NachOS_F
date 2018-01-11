@@ -140,7 +140,7 @@ Scheduler::Run (Thread * nextThread)
     #ifdef USER_PROGRAM
 
 
-    if(currentThread!=NULL && currentThread->space == NULL && currentThread->estProcessus ==false){
+    if(currentThread!=NULL && currentThread->space == NULL && currentThread->type == 2){
         currentThread->Finish();
     }
 

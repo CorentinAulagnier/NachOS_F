@@ -40,7 +40,12 @@ int do_UserThreadCreate(int f, int arg, int fct_fin) {
     Thread* newThread = new Thread("Thread créé");
     if (newThread == NULL) return 0;
     newThread->numStackInAddrSpace = test ;
-    newThread->estProcessus = false;
+    newThread->type = 2; //est un user_thread
+
+    /* Si le thread courant est un thread utilisateur : on ajoute le thread a sa liste*/
+    if(!currentThread->type != 2){
+        currentThread->listeThread->Append((void*)newThread);
+    }
 
     newThread->fonction_retour = fct_fin;
 
@@ -63,11 +68,11 @@ void do_UserThreadExit() {
     
     if(currentThread->space->nbThreads <= 0 ) {
         currentThread->space->semNbThread->V();
-        printf("Exception: appel erroné à la fonction UserThreadExit\n");
+        DEBUG('t', "Exception: appel erroné à la fonction UserThreadExit\n");
     } else {
         currentThread->space->nbThreads --;
         /* Si le thread courrant est un processus : on arrete le processus */ 
-		if(currentThread->estProcessus == true){
+		if(currentThread->type == 1){
 
         	currentThread->space->semNbThread->V();
 
@@ -83,6 +88,13 @@ void do_UserThreadExit() {
 			currentThread->Finish();    
 
 		} else {
+
+            //Le thread utilisateur a créé d'autres threads
+            while(!currentThread->listeThread->IsEmpty()){  
+                Thread *fils = (Thread *) currentThread->listeThread->Remove();
+                fils->space = NULL;
+            }
+
 			itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
 			it->semThread->V();
 			currentThread->space->structNbThreads->Clear(currentThread->numStackInAddrSpace);
@@ -92,16 +104,18 @@ void do_UserThreadExit() {
     }
 }
     
-void do_UserThreadJoin(int tid) {
+int do_UserThreadJoin(int tid) {
     itemThread* it = currentThread->space->listThread->Find(tid);
     if (it != NULL)  {
         it->semThread->P();
-        DEBUG('a', "Le thread %d s'est bien terminé.\n",it->tid);
+        DEBUG('t', "Le thread %d s'est bien terminé.\n",it->tid);
         free(currentThread->space->listThread->Remove(it->tid));
         //pour le debug : etat de la liste
         //printList(currentThread->space->listThread);
+
+        return 1;
     } else {
-        printf("Exception: le thread spécifié lors de l'appel à UserThreadJoin n'existe pas.\n");
+        return 0;
     }
     
 }
