@@ -47,6 +47,7 @@ ReceptionTest(int farAddr)
 {
     Transport* t = new Transport();
     char message[MAX_BUFFER_SIZE];
+    bzero(message, MAX_BUFFER_SIZE);
     
     printf("En attente de message en provenance de la machine 0\n");
     

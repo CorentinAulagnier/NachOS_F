@@ -171,6 +171,8 @@ bool Transport::receive(int from, void* content){
     int posBuffer = 0;
     
     char mail[MaxMailSize];
+    bzero(buffer, MAX_BUFFER_SIZE);
+    
     bool ackSuccess = true;
     
     int nbPaquets = 1;
@@ -199,12 +201,16 @@ printf("Nombre de paquets : %d\n",nbPaquets);
             while (paquetNotFind) {
                 /* Reception du paquetnumPaquet */
                 postOffice->Receive(1, &pktHdr, &mailHdr, (char*)mail);
-
+//((char*)mail)[mailHdr.length] = '\0';
                 if (mailHdr.numPaquet == i) {
 /*
-printf("Message recu = \"%s\"\n", mail);
+printf("mailHdr.length = %d,Message recu = \"%s\"\n",mailHdr.length, mail);
+printf("BUFFER %s\n",buffer);
 */
                     strncpy((char*)((int)buffer + posBuffer), mail, mailHdr.length);
+/*
+printf("BUFFER %s\n",buffer);
+*/
                     posBuffer +=mailHdr.length;
                     
                     /* Envoie ack du numPaquet */
