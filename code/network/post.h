@@ -144,4 +144,6 @@ class PostOffice {
     Lock *sendLock;		// Only one outgoing message at a time
 };
 
+void PrintHeader(PacketHeader pktHdr, MailHeader mailHdr);
+
 #endif

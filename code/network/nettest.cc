@@ -79,7 +79,7 @@ Boucle(int farAddr)
 
 
 /********** X10 ***********/
-
+/*
 void
 MailTest(int farAddr)
 {
@@ -112,10 +112,10 @@ MailTest(int farAddr)
     interrupt->Halt();
 }
 
-
+*/
 
 /********** ORIGINAL *************/
-/*
+
 void
 MailTest(int farAddr)
 {
@@ -135,7 +135,10 @@ MailTest(int farAddr)
 
     // Send the first message
     postOffice->Send(outPktHdr, outMailHdr, data); 
-
+    
+printf("Send OK ! \n");
+PrintHeader(outPktHdr, outMailHdr);
+printf("Wait message (%d,%d) ! \n", postOffice->GetAdd(), 0);
     // Wait for the first message from the other machine
     postOffice->Receive(0, &inPktHdr, &inMailHdr, buffer);
     printf("Got \"%s\" from %d, box %d\n",buffer,inPktHdr.from,inMailHdr.from);
@@ -156,4 +159,4 @@ MailTest(int farAddr)
     // Then we're done!
     interrupt->Halt();
 }
-*/
+

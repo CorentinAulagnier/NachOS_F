@@ -76,7 +76,7 @@ MailBox::~MailBox()
 //	"mailHdr" -- source, destination mailbox ID's
 //----------------------------------------------------------------------
 
-static void 
+void 
 PrintHeader(PacketHeader pktHdr, MailHeader mailHdr)
 {
     printf("From (%d, %d) to (%d, %d) bytes %d\n",
@@ -124,7 +124,6 @@ MailBox::Get(PacketHeader *pktHdr, MailHeader *mailHdr, char *data)
     DEBUG('n', "Waiting for mail in mailbox\n");
     Mail *mail = (Mail *) messages->Remove();	// remove message from list;
 						// will wait if list is empty
-
     *pktHdr = mail->pktHdr;
     *mailHdr = mail->mailHdr;
     if (DebugIsEnabled('n')) {
@@ -310,7 +309,6 @@ PostOffice::Receive(int box, PacketHeader *pktHdr,
 				MailHeader *mailHdr, char* data)
 {
     ASSERT((box >= 0) && (box < numBoxes));
-
     boxes[box].Get(pktHdr, mailHdr, data);
     ASSERT(mailHdr->length <= MaxMailSize);
 }

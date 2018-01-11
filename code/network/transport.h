@@ -1,6 +1,5 @@
 #include "system.h"
 #include "post.h"
-#include "synch.h"
 
 class Transport {
     public :
@@ -21,10 +20,13 @@ class Transport {
       //  Semaphore reception;
 };
 
+bool trySend(int to, int numPaquet, void* content, int sizeMail);
+bool sendingLoop(PacketHeader outPktHdr, MailHeader outMailHdr, void* content);
+bool ackReceive(int fromMachine, int numPaquet);
 
-bool trySend(int to, int numPaquet, void* content);
-bool tryInitSend(int to, int sizeContent);
-bool sendingLoop(PacketHeader outPktHdr, MailHeader outMailHdr, void* content, int numPaquet);
-bool ackReceive(int to, int numPaquet);
-PacketHeader creerPacketHeader(int to);
-MailHeader creerMailHeader(int to, int numPaquet);
+bool tryAck(int to, int numPaquet, bool lastAck);
+bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck);
+bool nextReceive(int fromMachine, int numPaquet);
+
+PacketHeader creerPacketHeader(int to, int from);
+MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size);
