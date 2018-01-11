@@ -43,9 +43,9 @@ int do_UserThreadCreate(int f, int arg, int fct_fin) {
     newThread->type = 2; //est un user_thread
 
     /* Si le thread courant est un thread utilisateur : on ajoute le thread a sa liste*/
-    if(!currentThread->type != 2){
+    /*if(!currentThread->type != 2){
         currentThread->listeThread->Append((void*)newThread);
-    }
+    }*/
 
     newThread->fonction_retour = fct_fin;
 
@@ -85,15 +85,15 @@ void do_UserThreadExit() {
 
             /* Destruction du processus*/     
 			currentThread->space->tokill = true;
-			currentThread->Finish();    
+			currentThread->Finish();
 
 		} else {
 
             //Le thread utilisateur a créé d'autres threads
-            while(!currentThread->listeThread->IsEmpty()){  
+           /* while(!currentThread->listeThread->IsEmpty()){  
                 Thread *fils = (Thread *) currentThread->listeThread->Remove();
                 fils->space = NULL;
-            }
+            } */
 
 			itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
 			it->semThread->V();
@@ -108,7 +108,6 @@ int do_UserThreadJoin(int tid) {
     itemThread* it = currentThread->space->listThread->Find(tid);
     if (it != NULL)  {
         it->semThread->P();
-        DEBUG('t', "Le thread %d s'est bien terminé.\n",it->tid);
         free(currentThread->space->listThread->Remove(it->tid));
         //pour le debug : etat de la liste
         //printList(currentThread->space->listThread);

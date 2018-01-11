@@ -10,6 +10,14 @@ void f1(void* c) {
     UserThreadExit();
 }
 
+void f2(void* c) {
+
+    int t3 = UserThreadCreate(&f1, c);
+    UserThreadJoin(t3);
+
+    UserThreadExit();
+}
+
 int main() {
     char c1 = 'A', c2 = 'B';
     int t1 = UserThreadCreate(&f1, &c1);

@@ -93,7 +93,6 @@ Scheduler::FindNextToRun ()
 void
 Scheduler::Run (Thread * nextThread)
 {
-
     Thread *oldThread = currentThread;
 
     // LB: For safety...
@@ -141,6 +140,7 @@ Scheduler::Run (Thread * nextThread)
 
 
     if(currentThread!=NULL && currentThread->space == NULL && currentThread->type == 2){
+    DEBUG ('t', "Finish nom ;  \"%s\"\n", currentThread->getName ());
         currentThread->Finish();
     }
 

@@ -83,11 +83,11 @@ class Lock
     // holds this lock.  Useful for
     // checking in Release, and in
     // Condition variable ops below.
-
+    int holder;
   private:
     const char *name;		// for debugging
     Semaphore *semLock;
-    int holder;
+
     // plus some other stuff you'll need to define
 };
 

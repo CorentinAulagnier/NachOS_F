@@ -53,7 +53,7 @@ Thread::Thread (const char *threadName)
 #ifdef USER_PROGRAM
     space = NULL;
     type = 3; ////est un thread_du_systeme de base, reecrit si autre cas
-    listeThread = new List;
+    //listeThread = new List;
 
     /*** NULL par défaut -> Peut eventuellement buguer *****************************************/
     argUser = (int)NULL;
@@ -85,19 +85,24 @@ Thread::Thread (const char *threadName)
 
 Thread::~Thread ()
 {
-    DEBUG ('t', "Deleting thread \"%s\"\n", name);
+    DEBUG ('t', "Deleting thread  \"%d\"", tid);
 
     ASSERT (this != currentThread);
+
+
+
+
     if (stack != NULL)
 	DeallocBoundedArray ((char *) stack, StackSize * sizeof (int));
 
-#ifdef USER_PROGRAM
 
+#ifdef USER_PROGRAM
+ DEBUG ('t', " de type : \"%d\"", type);  DEBUG ('t', " de nom : \"%s\"", name);
 	if(this->space != NULL && this->space->tokill == true){
-		delete this->space;
+		delete this->space; // err de seg
 	}
 #endif
-
+DEBUG ('t', "VOici un message d'erreur approprié\n");
 }
 
 //----------------------------------------------------------------------
@@ -205,6 +210,7 @@ Thread::Finish ()
     // End of addition 
 
     threadToBeDestroyed = currentThread;
+
     Sleep ();			// invokes SWITCH
     // not reached
 }
@@ -280,6 +286,7 @@ Thread::Sleep ()
     while ((nextThread = scheduler->FindNextToRun ()) == NULL)
 	interrupt->Idle ();	// no one to run, wait for an interrupt
 
+    DEBUG ('t', "Sleeping thread ");
     scheduler->Run (nextThread);	// returns when we've been signalled
 }
 

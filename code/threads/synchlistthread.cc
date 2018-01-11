@@ -3,12 +3,13 @@
 
 SynchListThread::SynchListThread()
 {
-    list = new List ();
+    list = new List;
     lock = new Semaphore ("list lock", 1);
 }
 
 SynchListThread::~SynchListThread ()
 {
+   
     delete list;
     delete lock;
 }
@@ -18,16 +19,16 @@ SynchListThread::Append (itemThread* item)
 {
     lock->P();		
 
-    itemThread * elm = (itemThread *)list->GetFirst();
+        itemThread * elm = (itemThread *)list->GetFirst();
 
-    if (elm == NULL) {
-        list->SetFirst(item);
-    } else {
-        while (elm->next != NULL ){
-            elm = elm->next;
+        if (elm == NULL) {
+            list->SetFirst(item);
+        } else {
+            while (elm->next != NULL ){
+                elm = elm->next;
+            }
+            elm->next = item;
         }
-        elm->next = item;
-    }
     lock->V();
 }
 
@@ -48,7 +49,7 @@ SynchListThread::Remove (int tid)
     if (elm == NULL) {
         //rien à enlever
     } else if (prec == NULL) {
-        list->SetFirst(first->next);
+        list->SetFirst(elm->next);
     } else {
         prec->next = elm->next;
     }

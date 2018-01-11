@@ -16,11 +16,9 @@ void f(void *s) {
 }
 
 int main() {
-   //int d = UserThreadCreate(f, (void *) THIS);
+
     UserThreadCreate(f, (void *) THIS);
     f((void*) THAT);
 
-   //UserThreadJoin(d);
     return 1;
-    //Halt();
 }

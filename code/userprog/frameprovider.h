@@ -23,7 +23,7 @@ class FrameProvider
   private:
     int size;
     BitMap* bitmap;
-    Semaphore* semBitMap;
+    Lock* semBitMap;
 };
 
 #endif

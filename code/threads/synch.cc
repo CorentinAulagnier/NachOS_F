@@ -64,6 +64,7 @@ Semaphore::~Semaphore ()
 void
 Semaphore::P ()
 {
+
     IntStatus oldLevel = interrupt->SetLevel (IntOff);	// disable interrupts
 
     while (value == 0)
@@ -88,6 +89,7 @@ Semaphore::P ()
 void
 Semaphore::V ()
 {
+
     Thread *thread;
     IntStatus oldLevel = interrupt->SetLevel (IntOff);
 
@@ -96,6 +98,7 @@ Semaphore::V ()
 	scheduler->ReadyToRun (thread);
     value++;
     (void) interrupt->SetLevel (oldLevel);
+
 }
 
 // Dummy functions -- so we can compile our later assignments 
@@ -105,7 +108,7 @@ Lock::Lock (const char *debugName)
 {
     name = debugName;
     semLock = new Semaphore("semLock",1);
-    holder = 0;
+    holder = -1;
 }
 
 Lock::~Lock ()
@@ -117,21 +120,24 @@ Lock::~Lock ()
 void
 Lock::Acquire ()
 {
+    IntStatus oldLevel = interrupt->SetLevel (IntOff);	// disable interrupts
     semLock->P();
     holder = currentThread->tid;
+    (void) interrupt->SetLevel (oldLevel);
 }
 
 void
 Lock::Release ()
 {
-    holder = 0;
+    IntStatus oldLevel = interrupt->SetLevel (IntOff);	// disable interrupts    
+    holder = -1;
     semLock->V();
+    (void) interrupt->SetLevel (oldLevel);   	  
 }
 
 bool Lock::isHeldByCurrentThread ()
 {
     return currentThread->tid == holder;
-    return true;
 }
 
 Condition::Condition (const char *debugName)

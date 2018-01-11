@@ -59,6 +59,7 @@ List::~List ()
 {
     while (Remove () != NULL)
 	;			// delete all the list elements
+
 }
 
 //----------------------------------------------------------------------
@@ -231,25 +232,38 @@ List::SortedInsert (void *item, long long sortKey)
 void *
 List::SortedRemove (long long *keyPtr)
 {
+	  DEBUG ('t', "debut sorted remove \n");
+
+    if(first==NULL){
+	  DEBUG ('t', "FIRST EST NULL \n");
+    }
+
     ListElement *element = first;
     void *thing;
 
     if (IsEmpty ())
 	return NULL;
 
+	  DEBUG ('t', "avant thing = first->item \n");
     thing = first->item;
+	  DEBUG ('t', "apres thing = first->item \n");
     if (first == last)
       {				// list had one item, now has none 
+
 	  first = NULL;
 	  last = NULL;
       }
     else
       {
+
 	  first = element->next;
       }
+
     if (keyPtr != NULL)
 	*keyPtr = element->key;
+
     delete element;
+	  DEBUG ('t', "FIN sorted remove \n");
     return thing;
 }
 

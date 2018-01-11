@@ -146,7 +146,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
     // to run anything too big --
     // at least until we have
     // virtual memory
-
     if((unsigned int)frameprovider->NumAvailFrame() < numPages){
         return;
     }
@@ -222,18 +221,23 @@ AddrSpace::~AddrSpace ()
 {
   // LB: Missing [] for delete
   // delete pageTable;
+
   for (unsigned int i = 0; i < numPages; i++){
-    frameprovider->ReleaseFrame(pageTable[i].physicalPage);    
+    frameprovider->ReleaseFrame(pageTable[i].physicalPage); 
   }
+
   delete [] pageTable;
   // End of modification
 
     /* Ajouté :
      * Destruction des attributs rajoutés
      */
-	delete listThread;
-    delete structNbThreads;
-    delete semNbThread;
+DEBUG ('t', "Je suis marqué\n");
+	delete listThread; 
+   DEBUG ('t', "Je ne suis pas marqué\n");
+    delete structNbThreads;   
+    delete semNbThread;    
+
 }
 
 //----------------------------------------------------------------------
