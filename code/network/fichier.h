@@ -6,9 +6,9 @@ class Fichier {
         Fichier();
         ~Fichier();
 
-        bool sendFichier(void* content);
-        bool receiveFichier(void* content);
-        
+        bool sendFichier(int to);
+        bool receiveFichier(int to, char* name, void* content);
+
     private :
         Transport transport;
 };
