@@ -24,38 +24,55 @@
 #include "transport.h"
 
 
-
 void
-EnvoiTest(int farAddr, void* message)
+EnvoiTest(int farAddr, float reli)
 {
-    Transport* t = new Transport();
+    Transport* t = new Transport(reli);
     
-    printf("Envoie du message : \"%s\" a la machine 1\n",(char*)message);
+    char message[5][MAX_STRING_SIZE];
+    strcpy(message[0],"Hello");
+    strcpy(message[1], "_CouCou_!");
+    strcpy(message[2], "%*µ£µµ%£2345678*");
+    strcpy(message[3], "Bonjour_nous_sommes_le_groupe_F!");
+    strcpy(message[4], "Une sphère mouvante désigne un ensemble de cercles figurant le système solaire en tout ou partie. ");
+
+    for (int i = 0; i<5; i++) {
     
-    if (t->send(farAddr, message, strlen((char*)message))) printf("Sending OK !\n");
-    else printf("Sending ERROR !\n");
+        printf("\n**********************\n\n");
+        printf("Envoie du message : \"%s\" a la machine %d\n",message[i],farAddr);
+        
+        if (t->send(farAddr, message[i], strlen(message[i]))) printf("Sending OK !\n");
+        else printf("Sending ERROR !\n");
+
+    }
+
+    Delay (5);
 
     interrupt->Halt();   
 }
 
-void EnvoiTest2(int farAddr){
-    EnvoiTest(farAddr, (char*)"Bonjour_je_suis_Corentin_!Bonjour_je_suis_Corentin_!");
-}
 
 void
-ReceptionTest(int farAddr)
+ReceptionTest(int farAddr, float reli)
 {
-    Transport* t = new Transport();
+    Transport* t = new Transport(reli);
+    
     char message[MAX_BUFFER_SIZE];
-    bzero(message, MAX_BUFFER_SIZE);
+ 
+    for (int i = 0; i<5; i++) {
     
-    printf("En attente de message en provenance de la machine 0\n");
-    
-    if (t->receive(farAddr, message)) {
-        printf("Receive OK ! \n");
-        printf("Message : \n\"%s\"\n",message);
+        printf("\n**********************\n\n");
+        printf("En attente de message en provenance de la machine %d\n",farAddr);
+     
+        bzero(message, MAX_BUFFER_SIZE);
+
+        if (t->receive(farAddr, message)) {
+            printf("Receive OK ! \n");
+            printf("Message : \n\"%s\"\n",message);
+        }
+        else printf("Receive ERROR !\n");
+
     }
-    else printf("Receive ERROR !\n");
 
     interrupt->Halt();
    

@@ -2,21 +2,18 @@
 #include "addrspace.h"
 #include "post.h"
 
+#define ACK "ACK" 
+
 class Transport {
     public :
-        Transport();
+        Transport(float reemission);
         ~Transport();
 
         // return 0 fail, 1 success
         bool send(int to, void* content, int sizeContent);
         bool receive(int from, void* content);
         
-        /* ----- map ----- */
-        /*bool isMapped(int to);
-        bool addMapping(int to);
-        int findBox(int to);
-        int map[postOffice->numBoxes] = {-1}; //associe chaque autre machine connectée à une box
-*/
+        
     private :
       //  Semaphore reception;
 };

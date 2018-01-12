@@ -1,20 +1,30 @@
 #include "transport.h"
 
-#define MAXREEMISSIONS 10
-#define TEMPO 1 // en secondes
-#define ACK "ACK" 
-
+static int MAXREEMISSIONS;
+static int TEMPO;
 
 /* -------- transport -------*/
 
-Transport::Transport()
+Transport::Transport(float reemission)
 {
-   // reception = new Semaphore("synch reception", 0);
+    if (reemission == 1) {
+        MAXREEMISSIONS = 5;
+        TEMPO = 1;
+    } else if (reemission >= 0.5) {
+        MAXREEMISSIONS = 15;
+        TEMPO = 1;
+    } else if (reemission >= 0.3) {
+        MAXREEMISSIONS = 25;
+        TEMPO = 1;
+    } else  {
+        MAXREEMISSIONS = 45;
+        TEMPO = 2;
+    }
+    printf("MAXREEMISSIONS = %d, TEMPO = %d\n", MAXREEMISSIONS, TEMPO);
 }
 
 Transport::~Transport()
-{ 
-   // delete reception;
+{
 }
 
 /*****************************************************************/
@@ -58,8 +68,8 @@ bool Transport::send(int to, void* content, int sizeContent){
 
         if (!trySuccess) return false; 
     }
-    
-    Delay (MAXREEMISSIONS);
+
+    Delay (MAXREEMISSIONS/2);
     return true;
 }
 
@@ -198,7 +208,10 @@ bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck)
 
     postOffice->Send(outPktHdr, outMailHdr, ACK);
 
-    for (int i = 1; i < MAXREEMISSIONS; i++) {
+    int reemission = MAXREEMISSIONS;
+    if (lastAck) reemission = (int)reemission/2;
+    
+    for (int i = 1; i < reemission; i++) {
         if(nextReceive(outPktHdr.to, outMailHdr.numPaquet)) {
             return true;
         }

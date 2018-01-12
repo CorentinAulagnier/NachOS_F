@@ -62,9 +62,8 @@ extern void StartProcess (char *file), ConsoleTest (char *in, char *out);
 extern void SynchConsoleTest (char *in, char *out);
 extern void MailTest (int networkID);
 extern void Boucle (int farAddr);
-extern void EnvoiTest2(int farAddr);
-extern void EnvoiTest(int farAddr, void* message);
-extern void ReceptionTest (int farAddr);
+extern void EnvoiTest(int farAddr, float reli);
+extern void ReceptionTest (int farAddr, float reli);
 
 //----------------------------------------------------------------------
 // main
@@ -174,9 +173,9 @@ main (int argc, char **argv)
         
 
             /* Test mail simple */
-
-		//MailTest (atoi (*(argv + 1)));
-		
+        /*
+		MailTest (atoi (*(argv + 1)));
+		*/
 		
 		    /* Boucle N machines */
 		/*
@@ -184,12 +183,17 @@ main (int argc, char **argv)
 		Boucle ((postOffice->GetAdd() + 1 ) % N);
 		*/
 
-		    /* Test Protocole transport */
+		    /* Test Protocole transport */	
+
+
+
+        float reli = atof(*(argv + 3));
+        if (reli == 0) reli = 1;	
+        
         if ((atoi (*(argv - 1))) == 0) {
-            //EnvoiTest2(atoi (*(argv + 1)));
-            EnvoiTest (atoi (*(argv + 1)), *(argv + 2));
+            EnvoiTest (atoi (*(argv + 1)), reli);
         } else if ((atoi (*(argv - 1))) == 1) {
-            ReceptionTest (atoi (*(argv + 1)));
+            ReceptionTest (atoi (*(argv + 1)), reli);
         }
         
         
