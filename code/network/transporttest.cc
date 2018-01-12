@@ -32,7 +32,7 @@ EnvoiTest(int farAddr, void* message)
     
     printf("Envoie du message : \"%s\" a la machine 1\n",(char*)message);
     
-    if (t->send(farAddr, message, sizeof(message))) printf("Sending OK !\n");
+    if (t->send(farAddr, message, strlen((char*)message))) printf("Sending OK !\n");
     else printf("Sending ERROR !\n");
 
     interrupt->Halt();   

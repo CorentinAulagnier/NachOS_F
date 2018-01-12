@@ -4,37 +4,6 @@
 #define TEMPO 1 // en secondes
 #define ACK "ACK" 
 
-/* ------- map --------- */
-/*
-bool isMapped(int to) {
-    int i;
-    for(i = 0; i<postOffice->numBoxes; i++) {
-        if(map[i] == to) return true;
-    }
-    return false;
-}
-
-bool addMapping(int to) {
-    int i;
-    for(i = 0; i<postOffice->numBoxes; i++) {
-        if(map[i] == -1) {
-            map[i] = to;
-            return true;
-        } 
-    }
-    return false;
-}
-
-int findBox(int to) {
-    int i;
-    for(i = 0; i<postOffice->numBoxes; i++) {
-        if(map[i] == to) return i;
-    }
-    return -1;
-}
-
-
-*/
 
 /* -------- transport -------*/
 
@@ -53,27 +22,20 @@ Transport::~Transport()
 /*****************************************************************/
 
 bool Transport::send(int to, void* content, int sizeContent){
-    /*
-    // S ajoute dans la map si il n y est pas encore
-    if(!isMapped(to)) {
-        //sort s'il échoue
-        if(!addMapping(to)) return false;
-    }
-    */
     char buff[MaxMailSize];
     bool trySuccess = true; // false = Erreur lors de l envoie
     
     int nbPaquets = sizeContent/MaxMailSize;
     if (sizeContent%MaxMailSize > 0 ) nbPaquets++;
-/*
-printf("Nombre de paquets :%d\n",nbPaquets);
-*/
+    
+    DEBUG('w',"sizeContent = %d, Nombre de paquets :%d\n",sizeContent, nbPaquets);
+
     for (int i = 0; i<=nbPaquets; i++){
         printf(".");
         fflush(stdout);
-/*
-printf("Traitement du paquet num %d\n",i);
-*/
+
+        DEBUG('w',"Traitement du paquet num %d\n",i);
+
         if (i == 0){ // paquet initiale 
             /* Envoie de la taille du message */
             char size[MAX_INT_SIZE];
@@ -85,15 +47,15 @@ printf("Traitement du paquet num %d\n",i);
             bzero(buff, MaxMailSize+1);
             for (int j = 0; j<(int)MaxMailSize; j++)
                 buff[j] = ((char*)((int)content + (i-1)*(int)MaxMailSize))[j];
-/*
-printf("Message = %s\n", buff);
-*/
+
+            DEBUG('w',"Message = %s\n", buff);
+
             trySuccess = trySend(to, i, buff, strlen(buff));
 
         }
-/*
-printf("Paquet num %d, %s\n", i, trySuccess?"EnvoieSucces":"Envoie ERREUR");
-*/
+
+        DEBUG('w',"Paquet num %d, %s\n", i, trySuccess?"EnvoieSucces":"Envoie ERREUR");
+
         if (!trySuccess) return false; 
     }
     
@@ -126,12 +88,6 @@ bool sendingLoop(PacketHeader outPktHdr, MailHeader outMailHdr, void* content) {
 }
 
 bool ackReceive(int fromMachine, int numPaquet){
-    /*
-    int numBox = findBox(to);
-    //Box introuvable
-    if(numBox == -1) return false;
-    */
-    
     MailBox* box = postOffice->GetBox(1);
     SynchList* messages = box->GetMessages();
 
@@ -156,13 +112,6 @@ bool ackReceive(int fromMachine, int numPaquet){
 /*****************************************************************/
 
 bool Transport::receive(int from, void* content){
-    /*
-    int numBox = findBox(to);
-    
-    // Box introuvable 
-    if(numBox == -1) return false;
-    */
-    
     PacketHeader pktHdr;
     MailHeader mailHdr;
     
@@ -171,7 +120,7 @@ bool Transport::receive(int from, void* content){
     int posBuffer = 0;
     
     char mail[MaxMailSize];
-    bzero(buffer, MAX_BUFFER_SIZE);
+    bzero(mail, MAX_BUFFER_SIZE);
     
     bool ackSuccess = true;
     
@@ -180,9 +129,9 @@ bool Transport::receive(int from, void* content){
     for (int i = 0; i<=nbPaquets; i++){
         printf(".");
         fflush(stdout);
-/*
-printf("Traitement du paquet num %d\n",i);
-*/   
+
+        DEBUG('w',"Traitement du paquet num %d\n",i);
+  
         if (i == 0) {
             /* Reception taille fichier */
             postOffice->Receive(1, &pktHdr, &mailHdr, buffer); 
@@ -193,26 +142,24 @@ printf("Traitement du paquet num %d\n",i);
             /* Calcul du nb de paquets du message */
             nbPaquets = atoi(buffer)/MaxMailSize;
             if (atoi(buffer)%MaxMailSize > 0 ) nbPaquets++;
-/*
-printf("Nombre de paquets : %d\n",nbPaquets);
-*/   
+
+            DEBUG('w',"Nombre de paquets : %d\n",nbPaquets);
+  
         } else {
             bool paquetNotFind = true;
             while (paquetNotFind) {
                 /* Reception du paquetnumPaquet */
                 postOffice->Receive(1, &pktHdr, &mailHdr, (char*)mail);
-//((char*)mail)[mailHdr.length] = '\0';
+
+                
                 if (mailHdr.numPaquet == i) {
-/*
-printf("mailHdr.length = %d,Message recu = \"%s\"\n",mailHdr.length, mail);
-printf("BUFFER %s\n",buffer);
-*/
                     strncpy((char*)((int)buffer + posBuffer), mail, mailHdr.length);
-/*
-printf("BUFFER %s\n",buffer);
-*/
+
                     posBuffer +=mailHdr.length;
+                    buffer[posBuffer] = '\0';
                     
+                    DEBUG('w',"buffer = %s\n",buffer);
+
                     /* Envoie ack du numPaquet */
                     if (i == nbPaquets) { // Dernier ACK
                         ackSuccess = tryAck(pktHdr.from, i, true);
@@ -224,17 +171,17 @@ printf("BUFFER %s\n",buffer);
                 }
             }
         }
-/* 
-printf("Paquet num %d, %s\n",i, ackSuccess?"AckSuccess":"Ack ERREUR");
-*/
+
+        DEBUG('w',"Paquet num %d, %s\n",i, ackSuccess?"AckSuccess":"Ack ERREUR");
+
         if (!ackSuccess) return false; 
 
     }
 
     strcpy((char*)content, buffer);
-/*
-printf("Contenue global du message = \n\"%s\"\n",(char*)content);
-*/
+
+    DEBUG('w',"Contenu global du message = \n\"%s\"\n",(char*)content);
+
     //Delay (MAXREEMISSIONS); // Attente des dernieres emmissions d ACK
     return true;
 }
@@ -261,14 +208,7 @@ bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck)
     return lastAck;
 }
 
-bool nextReceive(int fromMachine, int numPaquet){
-    /*
-    int numBox = findBox(to);
-    
-    //Box introuvable
-    if(numBox == -1) return false;
-    */
-    
+bool nextReceive(int fromMachine, int numPaquet){    
     MailBox* box = postOffice->GetBox(1);
     SynchList* messages = box->GetMessages();
 
