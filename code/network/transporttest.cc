@@ -24,6 +24,22 @@
 #include "transport.h"
 
 
+
+void vider(){
+    
+    MailBox* box = postOffice->GetBox(1);
+    SynchList* messages = box->GetMessages();
+    char data[] = "MAIL ERROR";
+    PacketHeader outPktHdr;	  
+    MailHeader outMailHdr;
+
+    while (!messages->IsEmpty()){
+        postOffice->Receive(1, &outPktHdr, &outMailHdr, data);
+    }
+    
+printf("\nBoite vide\n");
+}
+
 void
 EnvoiTest(int farAddr, float reli)
 {
@@ -37,13 +53,14 @@ EnvoiTest(int farAddr, float reli)
     strcpy(message[4], "Une sphère mouvante désigne un ensemble de cercles figurant le système solaire en tout ou partie. ");
 
     for (int i = 0; i<5; i++) {
-    
+
         printf("\n**********************\n\n");
         printf("Envoie du message : \"%s\" a la machine %d\n",message[i],farAddr);
         
         if (t->send(farAddr, message[i], strlen(message[i]))) printf("Sending OK !\n");
         else printf("Sending ERROR !\n");
-
+        
+        vider();
     }
 
     Delay (5);
@@ -60,7 +77,8 @@ ReceptionTest(int farAddr, float reli)
     char message[MAX_BUFFER_SIZE];
  
     for (int i = 0; i<5; i++) {
-    
+
+
         printf("\n**********************\n\n");
         printf("En attente de message en provenance de la machine %d\n",farAddr);
      
@@ -71,11 +89,11 @@ ReceptionTest(int farAddr, float reli)
             printf("Message : \n\"%s\"\n",message);
         }
         else printf("Receive ERROR !\n");
-
+        
+        vider();
     }
 
     interrupt->Halt();
    
 }
-
 

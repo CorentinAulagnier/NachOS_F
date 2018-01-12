@@ -1,14 +1,14 @@
 #include "transport.h"
 
 static int MAXREEMISSIONS;
-static int TEMPO;
+static float TEMPO;
 
 /* -------- transport -------*/
 
 Transport::Transport(float reemission)
 {
     if (reemission == 1) {
-        MAXREEMISSIONS = 5;
+        MAXREEMISSIONS = 10;
         TEMPO = 1;
     } else if (reemission >= 0.5) {
         MAXREEMISSIONS = 15;
@@ -17,10 +17,10 @@ Transport::Transport(float reemission)
         MAXREEMISSIONS = 25;
         TEMPO = 1;
     } else  {
-        MAXREEMISSIONS = 45;
-        TEMPO = 2;
+        MAXREEMISSIONS = 100;
+        TEMPO = 1;
     }
-    printf("MAXREEMISSIONS = %d, TEMPO = %d\n", MAXREEMISSIONS, TEMPO);
+    printf("MAXREEMISSIONS = %d, TEMPO = %f\n", MAXREEMISSIONS, TEMPO);
 }
 
 Transport::~Transport()
@@ -69,7 +69,11 @@ bool Transport::send(int to, void* content, int sizeContent){
         if (!trySuccess) return false; 
     }
 
-    Delay (MAXREEMISSIONS/2);
+    
+    
+    if (MAXREEMISSIONS != 100) Delay (MAXREEMISSIONS/2);
+    else Delay (20);
+    
     return true;
 }
 
