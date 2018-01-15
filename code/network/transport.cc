@@ -17,10 +17,9 @@ Transport::Transport(float reemission)
         MAXREEMISSIONS = 25;
         TEMPO = 1;
     } else  {
-        MAXREEMISSIONS = 100;
+        MAXREEMISSIONS = 70;
         TEMPO = 1;
     }
-    printf("MAXREEMISSIONS = %d, TEMPO = %f\n", MAXREEMISSIONS, TEMPO);
 }
 
 Transport::~Transport()
@@ -69,10 +68,7 @@ bool Transport::send(int to, void* content, int sizeContent){
         if (!trySuccess) return false; 
     }
 
-    
-    
-    if (MAXREEMISSIONS != 100) Delay (MAXREEMISSIONS/2);
-    else Delay (20);
+    Delay (20);
     
     return true;
 }
