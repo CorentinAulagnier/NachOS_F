@@ -139,11 +139,6 @@ Scheduler::Run (Thread * nextThread)
 
     #ifdef USER_PROGRAM
 
-
-    if(currentThread!=NULL && currentThread->space == NULL && currentThread->type == 2){
-        currentThread->Finish();
-    }
-
     if (currentThread->space != NULL)
       {				// if there is an address space
 	  currentThread->RestoreUserState ();	// to restore, do it.

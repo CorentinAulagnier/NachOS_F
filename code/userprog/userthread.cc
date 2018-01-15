@@ -42,11 +42,6 @@ int do_UserThreadCreate(int f, int arg, int fct_fin) {
     newThread->numStackInAddrSpace = test ;
     newThread->type = 2; //est un user_thread
 
-    /* Si le thread courant est un thread utilisateur : on ajoute le thread a sa liste*/
-    if(!currentThread->type != 2){
-        currentThread->listeThread->Append((void*)newThread);
-    }
-
     newThread->fonction_retour = fct_fin;
 
     /* Sauvegarde de l'argument de f */
@@ -72,31 +67,25 @@ void do_UserThreadExit() {
     } else {
         currentThread->space->nbThreads --;
         /* Si le thread courrant est un processus : on arrete le processus */ 
-		if(currentThread->type == 1){
-
-        	currentThread->space->semNbThread->V();
-
+		if(currentThread->space->nbThreads  == 0){
+            
 			machine->supprimerProcessus();
 
             /* Si c'etait le dernier processus : on arrete tout */
             if(machine->getNbProcessus() <= 0) {
                 interrupt->Halt();
 			}
-
             /* Destruction du processus*/     
-			currentThread->space->tokill = true;
+			currentThread->space->tokillby = currentThread->tid;
+
+        	currentThread->space->semNbThread->V();
 			currentThread->Finish();    
 
 		} else {
-
-            //Le thread utilisateur a créé d'autres threads
-            while(!currentThread->listeThread->IsEmpty()){  
-                Thread *fils = (Thread *) currentThread->listeThread->Remove();
-                fils->space = NULL;
-            }
-
-			itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
-			it->semThread->V();
+			if(currentThread->type == 2) {
+				itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
+				it->semThread->V();
+			}
 			currentThread->space->structNbThreads->Clear(currentThread->numStackInAddrSpace);
         	currentThread->space->semNbThread->V();
         	currentThread->Finish();
@@ -105,6 +94,8 @@ void do_UserThreadExit() {
 }
     
 int do_UserThreadJoin(int tid) {
+
+
     itemThread* it = currentThread->space->listThread->Find(tid);
     if (it != NULL)  {
         it->semThread->P();
@@ -115,6 +106,7 @@ int do_UserThreadJoin(int tid) {
 
         return 1;
     } else {
+
         return 0;
     }
     

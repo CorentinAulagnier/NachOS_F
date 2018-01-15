@@ -104,7 +104,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     unsigned int i, size;
 
 
-	this->tokill = false;
+	this->tokillby = -1;
 
     
      /* Ajouté :
@@ -220,20 +220,19 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
-  // LB: Missing [] for delete
-  // delete pageTable;
+
   for (unsigned int i = 0; i < numPages; i++){
     frameprovider->ReleaseFrame(pageTable[i].physicalPage);    
   }
   delete [] pageTable;
   // End of modification
-
     /* Ajouté :
      * Destruction des attributs rajoutés
      */
 	delete listThread;
     delete structNbThreads;
     delete semNbThread;
+
 }
 
 //----------------------------------------------------------------------

@@ -161,11 +161,6 @@ class Thread
      */
     int numStackInAddrSpace;
 
-    
-    /* Ajouté :
-     * Liste des threads lancés par le thread utilisateur this.
-     */
-    List * listeThread;
 
     //bool estProcessus; // vrai si le thread est un processus
     int type; // 1: processus / 2:userthread / 3:thread_du_sys  

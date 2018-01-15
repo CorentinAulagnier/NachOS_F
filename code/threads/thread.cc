@@ -53,7 +53,6 @@ Thread::Thread (const char *threadName)
 #ifdef USER_PROGRAM
     space = NULL;
     type = 3; ////est un thread_du_systeme de base, reecrit si autre cas
-    listeThread = new List;
 
     /*** NULL par défaut -> Peut eventuellement buguer *****************************************/
     argUser = (int)NULL;
@@ -93,7 +92,8 @@ Thread::~Thread ()
 
 #ifdef USER_PROGRAM
 
-	if(this->space != NULL && this->space->tokill == true){
+	if(this->space != NULL && this->space->tokillby == tid){
+        //printf(" Passage ici du thread : %s de tid %d ____________________________ \n", name, tid);
 		delete this->space;
 	}
 #endif

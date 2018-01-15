@@ -115,6 +115,7 @@ Initialize (int argc, char **argv)
 	    {
 		ASSERT (argc > 1);
 		RandomInit (atoi (*(argv + 1)));	// initialize pseudo-random
+        //printf("randm init : %d\n",atoi (*(argv + 1)));
 		// number generator
 		randomYield = TRUE;
 		argCount = 2;

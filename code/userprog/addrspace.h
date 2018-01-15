@@ -39,9 +39,9 @@ class AddrSpace
     void RestoreState ();	// info on a context switch 
 
     /* Ajouté :
-     * Booléen définissant si l'espace d'adressage doit être détruit ou non
+     * Entier représentant le pid de celui qui doit detruire l'espace d'adressage
      */
-	bool tokill;
+	int tokillby;
 
     /* Ajouté :
      * Bitmap gérant le nombre de threads d'un processus

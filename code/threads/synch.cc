@@ -69,6 +69,7 @@ Semaphore::P ()
     while (value == 0)
       {				// semaphore not available
 	  queue->Append ((void *) currentThread);	// so go to sleep
+
 	  currentThread->Sleep ();
       }
     value--;			// semaphore available, 
@@ -117,21 +118,26 @@ Lock::~Lock ()
 void
 Lock::Acquire ()
 {
+    IntStatus oldLevel = interrupt->SetLevel (IntOff);
+	if(!isHeldByCurrentThread()){
     semLock->P();
     holder = currentThread->tid;
+	}
+    (void) interrupt->SetLevel (oldLevel);
 }
 
 void
 Lock::Release ()
 {
+    IntStatus oldLevel = interrupt->SetLevel (IntOff);
     holder = 0;
     semLock->V();
+    (void) interrupt->SetLevel (oldLevel);
 }
 
 bool Lock::isHeldByCurrentThread ()
 {
     return currentThread->tid == holder;
-    return true;
 }
 
 Condition::Condition (const char *debugName)

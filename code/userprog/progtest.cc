@@ -36,6 +36,7 @@ StartProcess (char *filename)
     space = new AddrSpace (executable);
     currentThread->space = space;
     currentThread->space->nbThreads ++;
+    currentThread->numStackInAddrSpace = 0;
 
     delete executable;		// close file
 

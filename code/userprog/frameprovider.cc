@@ -9,9 +9,13 @@
 
 FrameProvider::FrameProvider (int nitems)
 {
+    int timem = time(NULL);
+    RandomInit(timem);
+    printf("time := %d\n",timem);
+
     size = nitems;
     bitmap = new BitMap(size);
-    semBitMap = new Semaphore("SemBitMap", 1);
+    lockBitMap = new Lock("LockBitMap");
 
 }
 
@@ -23,7 +27,7 @@ FrameProvider::~FrameProvider ()
 {
 
     delete bitmap;
-    delete semBitMap;
+    delete lockBitMap;
 
 }
 
@@ -34,9 +38,7 @@ FrameProvider::~FrameProvider ()
 int 
 FrameProvider::GetEmptyFrame()
 {
-    semBitMap->P();
-
-    RandomInit(time(NULL));
+    lockBitMap->Acquire();
     int r = Random() % (NumPhysPages);
     int nbTestTotal = size/2 ;
     int nbTest = 0;
@@ -50,12 +52,12 @@ FrameProvider::GetEmptyFrame()
     } else {
         bitmap->Mark(r);
     }
-    semBitMap->V();
+
 
     if(r != -1){
         bzero(&(machine->mainMemory[PageSize * r]), PageSize);
     }
-
+    lockBitMap->Release();
     return r;
 }
 
@@ -66,9 +68,9 @@ FrameProvider::GetEmptyFrame()
 void 
 FrameProvider::ReleaseFrame(int numFrame)
 {
-    semBitMap->P();
+    lockBitMap->Acquire();
     bitmap->Clear(numFrame);
-    semBitMap->V();    
+    lockBitMap->Release();    
 }
 
 /////////////////////////////////////////
@@ -78,9 +80,9 @@ FrameProvider::ReleaseFrame(int numFrame)
 int
 FrameProvider::NumAvailFrame()
 {
-    semBitMap->P();
+    lockBitMap->Acquire();
     int retour = bitmap->NumClear();
-    semBitMap->V();
+    lockBitMap->Release();
 
     return retour;
 }

@@ -17,30 +17,20 @@ void
 SynchListThread::Append (itemThread* item)
 {
     lock->P();		
-
-    itemThread * elm = (itemThread *)list->GetFirst();
-
-    if (elm == NULL) {
-        list->SetFirst(item);
-    } else {
-        while (elm->next != NULL ){
-            elm = elm->next;
-        }
-        elm->next = item;
-    }
+    list->Append(item);
     lock->V();
 }
 
 itemThread*
 SynchListThread::Remove (int tid)
 {
-    lock->P();		
+    lock->P();
 
-    itemThread * first = (itemThread *)list->GetFirst();
-    itemThread * elm = first;
-    itemThread * prec = NULL;
+    ListElement * first = list->GetFirst();
+    ListElement * elm = first;
+    ListElement * prec = NULL;
 
-    while (elm != NULL && elm->tid != tid) {
+    while (elm != NULL && ((itemThread *)elm->item)->tid != tid) {
         prec = elm;
         elm = elm->next;
     }
@@ -54,7 +44,7 @@ SynchListThread::Remove (int tid)
     }
 
     lock->V();
-    return elm;
+    return (itemThread *)elm;
 }
 
 itemThread*
@@ -63,13 +53,13 @@ SynchListThread::Find (int tid)
 
     lock->P();		
 
-    itemThread * elm = (itemThread *)list->GetFirst();
+    ListElement * elm = list->GetFirst();
 
-    while (elm != NULL && elm->tid != tid) {
+    while (elm != NULL && ((itemThread *)elm->item)->tid != tid) {
         elm = elm->next;
     }
     lock->V();
-    return elm;
+    return (itemThread *)elm->item;
 }
 
 itemThread* newItemThread(int tid) {
