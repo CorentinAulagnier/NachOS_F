@@ -64,6 +64,9 @@ extern void MailTest (int networkID);
 extern void Boucle (int farAddr);
 extern void EnvoiTest(int farAddr, float reli);
 extern void ReceptionTest (int farAddr, float reli);
+extern void testRequest();
+extern void Client(int id);
+extern void Serveur(int id);
 
 //----------------------------------------------------------------------
 // main
@@ -186,14 +189,14 @@ main (int argc, char **argv)
 		    /* Test Protocole transport */	
 
 
-
+        
         float reli = atof(*(argv + 3));
         if (reli == 0) reli = 1;	
         
         if ((atoi (*(argv - 1))) == 0) {
-            EnvoiTest (atoi (*(argv + 1)), reli);
+            Serveur (atoi (*(argv + 1)));
         } else if ((atoi (*(argv - 1))) == 1) {
-            ReceptionTest (atoi (*(argv + 1)), reli);
+            Client (atoi (*(argv + 1)));
         }
         
         
