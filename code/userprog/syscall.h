@@ -40,6 +40,12 @@
 #define SC_UserThreadJoin   19
 #define SC_ForkExec         20
 
+#define SC_UserSemCreate    21
+#define SC_UserSemDestroy   22
+#define SC_UserSemWait      23
+#define SC_UserSemPost      24
+#define SC_UserDelay        25
+
 #ifdef IN_USER_MODE
 
 // LB: This part is read only on compiling the test/*.c files.
@@ -181,6 +187,25 @@ int UserThreadJoin(int tid);
  */
 int ForkExec(char* s);
 
+/*Cree un Semaphore
+ */
+void* UserSemCreate(const char *debugName, int initialValue);
+
+/*Detruit un Semaphore
+ */
+void UserSemDestroy(void* sem);
+
+/*Semaphore en attente
+ */
+void UserSemWait(void* sem);
+
+/*Semaphore reveil
+ */
+void UserSemPost(void* sem);
+
+/*Met en pause un temps indetermine
+ */
+void UserDelay();
 #endif // IN_USER_MODE
 
 #endif /* SYSCALL_H */

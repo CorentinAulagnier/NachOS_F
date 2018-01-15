@@ -26,6 +26,7 @@
 #include "syscall.h"
 #include "userthread.h"
 #include "forkexec.h"
+#include "synch.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -228,6 +229,41 @@ ExceptionHandler (ExceptionType which)
                 char *filename = copyStringFromMachine(add, MAX_STRING_SIZE);
             	int retour = do_ForkExec(filename);
 				machine->WriteRegister(2,retour);
+                break;
+                
+   /*********************************************/             
+                
+            } case SC_UserSemCreate: {
+                DEBUG('t', "\nSC_UserSemCreate\n");
+                int addName = machine->ReadRegister(4); // @ de la chaine
+                char *name = copyStringFromMachine(addName, MAX_STRING_SIZE);
+                int num = machine->ReadRegister(5); // @ de la chaine
+                Semaphore* retour = new Semaphore(name, num);
+                machine->WriteRegister(2, (int)retour);
+                break;
+
+            } case SC_UserSemDestroy: {
+                DEBUG('t', "\nSC_UserSemDestroy\n");
+                Semaphore* sem = (Semaphore*)machine->ReadRegister(4); // @ de la fonction
+                sem->~Semaphore();
+                break;
+
+            } case SC_UserSemWait: {
+                DEBUG('t', "\nSC_UserSemWait\n");
+                Semaphore* sem = (Semaphore*)machine->ReadRegister(4); // @ de la fonction
+                sem->P();
+                break;
+
+            } case SC_UserSemPost: {
+                DEBUG('t', "\nSC_UserSemPost\n");
+                Semaphore* sem = (Semaphore*)machine->ReadRegister(4); // @ de la fonction
+                sem->V();
+                break;
+           
+            } case SC_UserDelay: {
+                DEBUG('t', "\nSC_UserDelay\n");
+                Delay(1);
+
                 break;
            
             } default: {

@@ -1,6 +1,7 @@
 #include "transport.h"
 
 static int MAXREEMISSIONS;
+static int DELAY_END;
 static float TEMPO;
 
 /* -------- transport -------*/
@@ -10,15 +11,19 @@ Transport::Transport(float reemission)
     if (reemission == 1) {
         MAXREEMISSIONS = 10;
         TEMPO = 1;
+        DELAY_END = 5;
     } else if (reemission >= 0.5) {
         MAXREEMISSIONS = 15;
         TEMPO = 1;
+        DELAY_END = 10;
     } else if (reemission >= 0.3) {
         MAXREEMISSIONS = 25;
         TEMPO = 1;
+        DELAY_END = 10;
     } else  {
         MAXREEMISSIONS = 70;
         TEMPO = 1;
+        DELAY_END = 20;
     }
 }
 
@@ -68,7 +73,7 @@ bool Transport::send(int to, void* content, int sizeContent){
         if (!trySuccess) return false; 
     }
 
-    Delay (20);
+    Delay (DELAY_END);
     
     return true;
 }

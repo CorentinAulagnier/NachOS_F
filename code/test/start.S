@@ -210,6 +210,47 @@ ForkExec:
 	j	$31
 	.end ForkExec
 
+	.globl UserSemCreate
+	.ent	UserSemCreate
+UserSemCreate:
+	addiu $2,$0,SC_UserSemCreate
+	syscall
+	j	$31
+	.end UserSemCreate
+	
+    .globl UserSemDestroy
+	.ent	UserSemDestroy
+UserSemDestroy:
+	addiu $2,$0,SC_UserSemDestroy
+	syscall
+	j	$31
+	.end UserSemDestroy
+
+    .globl UserSemWait
+	.ent	UserSemWait
+UserSemWait:
+	addiu $2,$0,SC_UserSemWait
+	syscall
+	j	$31
+	.end UserSemWait
+		
+    .globl UserSemPost
+	.ent	UserSemPost
+UserSemPost:
+	addiu $2,$0,SC_UserSemPost
+	syscall
+	j	$31
+	.end UserSemPost
+
+    .globl UserDelay
+	.ent	UserDelay
+UserDelay:
+	addiu $2,$0,SC_UserDelay
+	syscall
+	j	$31
+	.end UserDelay
+
+
 
 /* dummy function to keep gcc happy */
         .globl  __main
