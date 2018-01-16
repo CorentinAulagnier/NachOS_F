@@ -30,7 +30,7 @@ int do_UserThreadCreate(int f, int arg, int fct_fin) {
     int test = currentThread->space->structNbThreads->Find();
     if(test == -1){
         currentThread->space->semNbThread->V();
-        return 0;
+        return -1;
     }
     
     currentThread->space->nbThreads ++;
@@ -40,7 +40,7 @@ int do_UserThreadCreate(int f, int arg, int fct_fin) {
     Thread* newThread = new Thread("Thread créé");
     if (newThread == NULL) return 0;
     newThread->numStackInAddrSpace = test ;
-    newThread->type = 2; //est un user_thread
+    newThread->estUserThread = true; //est un user_thread
 
     newThread->fonction_retour = fct_fin;
 
@@ -82,7 +82,7 @@ void do_UserThreadExit() {
 			currentThread->Finish();    
 
 		} else {
-			if(currentThread->type == 2) {
+			if(currentThread->estUserThread) {
 				itemThread* it = currentThread->space->listThread->Find(currentThread->tid);
 				it->semThread->V();
 			}

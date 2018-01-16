@@ -162,8 +162,7 @@ class Thread
     int numStackInAddrSpace;
 
 
-    //bool estProcessus; // vrai si le thread est un processus
-    int type; // 1: processus / 2:userthread / 3:thread_du_sys  
+    bool estUserThread; // vrai si le thread est un thread utilisateur
 
     void SaveUserState ();	// save user-level register state
     void RestoreUserState ();	// restore user-level register state

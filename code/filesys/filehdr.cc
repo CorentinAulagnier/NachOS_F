@@ -27,6 +27,8 @@
 #include "system.h"
 #include "filehdr.h"
 
+#define nbIndirectParSecteur (int)(SectorSize / sizeof(int))
+
 //----------------------------------------------------------------------
 // FileHeader::Allocate
 // 	Initialize a fresh file header for a newly created file.
@@ -41,13 +43,22 @@
 bool
 FileHeader::Allocate(BitMap *freeMap, int fileSize)
 { 
+    int nbDejaAlloues = 0;
     numBytes = fileSize;
     numSectors  = divRoundUp(FileLength(), SectorSize);
     if (freeMap->NumClear() < numSectors)
 	return FALSE;		// not enough space
 
-    for (int i = 0; i < numSectors; i++)
-	dataSectors[i] = freeMap->Find();
+    for (int i = 0; (i < (int)NumDirect) && (nbDejaAlloues < numSectors); i++) {
+	    dataSectors[i] = freeMap->Find();
+
+        int tabIndirect[nbIndirectParSecteur];
+        for(int j = 0; (j<nbIndirectParSecteur) && (nbDejaAlloues < numSectors); j++){
+            tabIndirect[j] = freeMap->Find();
+            nbDejaAlloues++;
+        }
+        synchDisk->WriteSector(dataSectors[i], (char *)tabIndirect); 
+    }
     return TRUE;
 }
 
@@ -56,15 +67,25 @@ FileHeader::Allocate(BitMap *freeMap, int fileSize)
 // 	De-allocate all the space allocated for data blocks for this file.
 //
 //	"freeMap" is the bit map of free disk sectors
-//----------------------------------------------------------------------
+//---------------------------------------------------------------
 
 void 
 FileHeader::Deallocate(BitMap *freeMap)
 {
-    for (int i = 0; i < numSectors; i++) {
-	ASSERT(freeMap->Test((int) dataSectors[i]));  // ought to be marked!
-printf("filehdr 1\n");
-	freeMap->Clear((int) dataSectors[i]);
+    int nbDejaLibere = 0;
+
+    for (int i = 0; (i < (int)NumDirect) && (nbDejaLibere < numSectors); i++) {
+	    ASSERT(freeMap->Test((int) dataSectors[i]));  // ought to be marked!
+
+        int tabIndirect[nbIndirectParSecteur];
+        synchDisk->ReadSector(dataSectors[i], (char *)tabIndirect); 
+
+        for(int j = 0; (j<nbIndirectParSecteur) && (nbDejaLibere < numSectors); j++){
+            freeMap->Clear((int) tabIndirect[j]);
+            nbDejaLibere++;
+        }
+
+	    freeMap->Clear((int) dataSectors[i]);
     }
 }
 
@@ -107,7 +128,14 @@ FileHeader::WriteBack(int sector)
 int
 FileHeader::ByteToSector(int offset)
 {
-    return(dataSectors[offset / SectorSize]);
+    int sector = offset / SectorSize;
+    int numIndirect = sector / nbIndirectParSecteur;
+    int numDansListeIndirect = sector % nbIndirectParSecteur;
+
+    int tabIndirect[nbIndirectParSecteur];
+
+    synchDisk->ReadSector(dataSectors[numIndirect], (char *)tabIndirect);
+    return(tabIndirect[numDansListeIndirect]);
 }
 
 //----------------------------------------------------------------------

@@ -52,7 +52,7 @@ Thread::Thread (const char *threadName)
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
     space = NULL;
-    type = 3; ////est un thread_du_systeme de base, reecrit si autre cas
+    estUserThread = false; ////est un thread_du_systeme de base, reecrit si autre cas
 
     /*** NULL par défaut -> Peut eventuellement buguer *****************************************/
     argUser = (int)NULL;
