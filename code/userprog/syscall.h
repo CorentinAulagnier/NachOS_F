@@ -203,7 +203,7 @@ void UserSemWait(void* sem);
  */
 void UserSemPost(void* sem);
 
-/*Met en pause un temps indetermine
+/*Met en pause une seconde
  */
 void UserDelay();
 #endif // IN_USER_MODE

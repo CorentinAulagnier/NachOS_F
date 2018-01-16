@@ -35,7 +35,6 @@ void testPutString() {
     ajout(s, "");PutString(s);
     ajout(s, "Yo"); PutString(s);
     ajout(s, "Hello");PutString(s);
-    ajout(s, "");PutString(s);
     ajout(s, "Bonjour");PutString(s);
     ajout(s, "Bonjour\0");PutString(s);
     ajout(s, "Bonjour\n");PutString(s);
@@ -113,10 +112,10 @@ void testGetString() {
 void testGetInt() {
     PutString("\n- Lancement testGetInt -\n");
     PutString("\n- Ecrivez un entier, elle sera reecrite apres ! -\n");
-    PutString("\n- Ecrivez '777' pour quitter-\n");
+    PutString("\n- Ecrivez '666' pour quitter-\n");
     int c = 0;
     
-    while(c != 777) {
+    while(c != 666) {
         c = GetInt();PutInt(c);PutChar('\n');
     }
     PutString("\n- Fin testGetInt -\n");
