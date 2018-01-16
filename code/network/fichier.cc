@@ -278,6 +278,8 @@ void ClientLoop(int to, float rely) { //ID: 1+
                 printRequest(request);
                 transport->send(to, buffRequest, strlen(buffRequest));
 
+                transport->viderBoites();
+
                 if(transport->receive(to, buffContent)) {
                     printf("Le fichier %s a bien été reçu.\n",request->fileName);
                 }
@@ -291,7 +293,7 @@ void ClientLoop(int to, float rely) { //ID: 1+
         //clean en fin d'iteration
         bzero(buffContent, MAXFILESIZE);
         bzero(buffRequest, MAXREQUESTSIZE);
-        transport->viderReception();
+        transport->viderBoites();
     }
     
     //creation un fichier
@@ -347,6 +349,7 @@ void ServeurLoop(int to, float rely) { //ID: 0
         transport->receive(to, buffRequest);
         request = readRequest(buffRequest);
         printRequest(request);
+        transport->viderBoites();
         switch(request->type) {//TODO
             case 0:  //le CLIENT envoie
                 //repond ACK au client ?
@@ -362,6 +365,8 @@ void ServeurLoop(int to, float rely) { //ID: 0
                 printf("Contenu envoyé : |%s|\n",contentServeur);
                 if(transport->send(to, contentServeur, strlen(contentServeur))) {
                     printf("Le fichier %s a bien été reçu.\n",request->fileName);
+                } else {
+                    printf("Le fichier %s mal reçu.\n",request->fileName);
                 }
                 break;               
             

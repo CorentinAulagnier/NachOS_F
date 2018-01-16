@@ -22,7 +22,7 @@ class Transport {
         
         /* Vide la boite de reception (boite n°1) 
          */
-        void viderReception();
+        void viderBoites();
         
         
     private :

@@ -148,6 +148,9 @@ bool Transport::receive(int from, void* content){
         if (i == 0) {
             /* Reception taille fichier */
             postOffice->Receive(1, &pktHdr, &mailHdr, buffer);
+            while (mailHdr.ack == 1) {
+                postOffice->Receive(1, &pktHdr, &mailHdr, buffer);
+            }
             
             /* Envoie ack taille fichier */
             ackSuccess = tryAck(pktHdr.from, i, false);
@@ -268,7 +271,7 @@ MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size
     return outMailHdr;
 }
 
-void Transport::viderReception(){
+void Transport::viderBoites(){
     
     MailBox* box = postOffice->GetBox(1);
     SynchList* messages = box->GetMessages();
@@ -280,5 +283,11 @@ void Transport::viderReception(){
         postOffice->Receive(1, &outPktHdr, &outMailHdr, data);
     }
     
-    //printf("\nBoite vide\n");
+    box = postOffice->GetBox(0);
+    messages = box->GetMessages();
+    
+    while (!messages->IsEmpty()){
+        postOffice->Receive(0, &outPktHdr, &outMailHdr, data);
+    }
+    
 }
