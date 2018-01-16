@@ -42,7 +42,7 @@ bool
 FileHeader::Allocate(BitMap *freeMap, int fileSize)
 { 
     numBytes = fileSize;
-    numSectors  = divRoundUp(fileSize, SectorSize);
+    numSectors  = divRoundUp(FileLength(), SectorSize);
     if (freeMap->NumClear() < numSectors)
 	return FALSE;		// not enough space
 
@@ -63,6 +63,7 @@ FileHeader::Deallocate(BitMap *freeMap)
 {
     for (int i = 0; i < numSectors; i++) {
 	ASSERT(freeMap->Test((int) dataSectors[i]));  // ought to be marked!
+printf("filehdr 1\n");
 	freeMap->Clear((int) dataSectors[i]);
     }
 }
@@ -117,7 +118,7 @@ FileHeader::ByteToSector(int offset)
 int
 FileHeader::FileLength()
 {
-    return numBytes;
+	return abs(numBytes);
 }
 
 //----------------------------------------------------------------------
@@ -147,4 +148,12 @@ FileHeader::Print()
         printf("\n"); 
     }
     delete [] data;
+}
+
+// Dis si le fileHeader est celui d'un répertoire
+
+bool
+FileHeader::estRepertoire()
+{
+	return (numBytes < 0);
 }

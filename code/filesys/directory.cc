@@ -35,12 +35,40 @@
 //	"size" is the number of entries in the directory
 //----------------------------------------------------------------------
 
+// Constructeur du répertoire root
+
 Directory::Directory(int size)
 {
     table = new DirectoryEntry[size];
     tableSize = size;
-    for (int i = 0; i < tableSize; i++)
+    for (int i = 2; i < tableSize; i++)
 	table[i].inUse = FALSE;
+
+	table[0].inUse = true;
+	table[0].sector = 1;
+	strcpy(table[0].name,".");
+
+	table[1].inUse = true;
+	table[1].sector = 1;
+	strcpy(table[1].name,"..");
+}
+
+// Constructeur des répertoires non root
+
+Directory::Directory(int size, int sector, int sectorParent)
+{
+    table = new DirectoryEntry[size];
+    tableSize = size;
+    for (int i = 2; i < tableSize; i++)
+	table[i].inUse = FALSE;
+    printf("create sector : %d\n",sector);
+	table[0].inUse = true;
+	table[0].sector = sector;
+	strcpy(table[0].name,".");
+
+	table[1].inUse = true;
+	table[1].sector = sectorParent;
+	strcpy(table[1].name,"..");
 }
 
 //----------------------------------------------------------------------
@@ -194,4 +222,41 @@ Directory::Print()
 	}
     printf("\n");
     delete hdr;
+}
+
+bool
+Directory::estPlein()
+{
+    for (int i = 2; i < tableSize; i++) {
+		if (table[i].inUse == false) {
+			return false;
+		}
+	}
+	return true;
+
+}
+
+bool
+Directory::estVide()
+{
+    for (int i = 2; i < tableSize; i++) {
+		if (table[i].inUse == true) {
+			return false;
+		}
+	}
+	return true;
+
+}
+
+int
+Directory::secteurCourant()
+{
+	return this->table[0].sector;
+}
+
+bool
+Directory::estRoot()
+{
+        printf("sector parent : %d || sector soi même : %d\n",this->table[0].sector, this->table[1].sector);
+    return (this->table[0].sector == this->table[1].sector);
 }

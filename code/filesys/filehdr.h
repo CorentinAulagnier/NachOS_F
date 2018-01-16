@@ -56,8 +56,9 @@ class FileHeader {
 
     void Print();			// Print the contents of the file.
 
+	bool estRepertoire();
   private:
-    int numBytes;			// Number of bytes in the file
+    int numBytes;			// Number of bytes in the file /// Négatif pour un dossier !!!
     int numSectors;			// Number of data sectors in the file
     int dataSectors[NumDirect];		// Disk sector numbers for each data 
 					// block in the file

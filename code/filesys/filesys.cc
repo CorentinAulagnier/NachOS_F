@@ -97,7 +97,7 @@ FileSystem::FileSystem(bool format)
     // of the directory and bitmap files.  There better be enough space!
 
 	ASSERT(mapHdr->Allocate(freeMap, FreeMapFileSize));
-	ASSERT(dirHdr->Allocate(freeMap, DirectoryFileSize));
+	ASSERT(dirHdr->Allocate(freeMap, -1 * DirectoryFileSize));
 
     // Flush the bitmap and directory FileHeaders back to disk
     // We need to do this before we can "Open" the file, since open
@@ -185,8 +185,10 @@ FileSystem::Create(const char *name, int initialSize)
     directory = new Directory(NumDirEntries);
     directory->FetchFrom(directoryFile);
 
-    if (directory->Find(name) != -1)
+    if (directory->Find(name) != -1) {
       success = FALSE;			// file is already in directory
+        printf("Le fichier existe déja dans le répertoire\n");
+    }
     else {	
         freeMap = new BitMap(NumSectors);
         freeMap->FetchFrom(freeMapFile);
@@ -233,8 +235,8 @@ FileSystem::Open(const char *name)
 
     DEBUG('f', "Opening file %s\n", name);
     directory->FetchFrom(directoryFile);
-    sector = directory->Find(name); 
-    if (sector >= 0) 		
+    sector = directory->Find(name);
+    if (sector >= 0)
 	openFile = new OpenFile(sector);	// name was found in directory 
     delete directory;
     return openFile;				// return NULL if not found
@@ -276,6 +278,8 @@ FileSystem::Remove(const char *name)
     freeMap->FetchFrom(freeMapFile);
 
     fileHdr->Deallocate(freeMap);  		// remove data blocks
+
+printf("filesys 1\n");
     freeMap->Clear(sector);			// remove header block
     directory->Remove(name);
 
@@ -339,3 +343,170 @@ FileSystem::Print()
     delete freeMap;
     delete directory;
 } 
+
+int
+FileSystem::CreateDir(const char * name)
+{
+
+
+	bool success = true;
+    Directory *directory = new Directory(NumDirEntries);
+    directory->FetchFrom(directoryFile);
+
+	if(strlen(name) > FileNameMaxLen) {
+		printf("Le nom du répertoire est trop long\n");
+		success = false;
+	}
+
+	if (success && directory->Find(name) != -1) {
+       printf("Ce fichier exite déja\n");
+		success = false;
+    }
+
+    if (success && directory->estPlein()) {
+        printf("Le dossier est plein\n");
+        success = false;
+    }
+
+    BitMap *freeMap;
+    int freeSector;
+    if (success) {
+        freeMap = new BitMap(NumSectors);
+        freeMap->FetchFrom(freeMapFile);
+        freeSector = freeMap->Find();	// find a sector to hold the file header
+        if (freeSector == -1) {
+            printf("Il n'y a plus de secteurs libres\n");
+            success = false;
+        }
+    }
+
+    if (success) {
+        int secteurCourant = directory->secteurCourant();
+        // Ajout du dossier dans le dossier courant (son père)
+        directory->Add(name, freeSector);
+
+		//Nouveau header de dossier
+        FileHeader *newRepHeader = new FileHeader;
+
+		//On fait * -1 pour montrer que c'est un dossier
+        newRepHeader->Allocate(freeMap, -1 * DirectoryFileSize);
+
+        // Ecriture en mémoire
+        newRepHeader->WriteBack(freeSector);
+
+        // creation du dossier
+        Directory *newRep = new Directory(NumDirEntries, freeSector, secteurCourant);
+
+        OpenFile *newRepFile = new OpenFile(freeSector);
+        // Ecriture en mémoire
+        newRep->WriteBack(newRepFile);
+
+        // Sauvegarde du dossier courant
+        directory->WriteBack(directoryFile);
+
+        // Sauvegarde de la freemap
+        freeMap->WriteBack(freeMapFile);
+
+        delete freeMap;
+        delete newRepHeader;
+        delete newRepFile;
+        delete newRep;
+    }
+    delete directory;
+	return 0;
+}
+
+
+bool
+FileSystem::RmDir(const char * name)
+{   
+
+	Directory *directory;
+    BitMap *freeMap;
+    FileHeader *fileHdr;
+    int sector;
+    
+    directory = new Directory(NumDirEntries);
+    directory->FetchFrom(directoryFile);
+	int secteurCourant = directory->secteurCourant();
+	
+    sector = directory->Find(name);
+    if (sector == -1) {
+		printf("Le dossier n'existe pas\n");
+		delete directory;
+		return FALSE;			 // file not found 
+    }
+
+    fileHdr = new FileHeader;
+    fileHdr->FetchFrom(sector);
+
+	if(fileHdr->estRepertoire()) {
+		OpenFile * rmRepertoireFile = new OpenFile(sector);
+		Directory * rmRepertoire = new Directory(NumDirEntries);
+		rmRepertoire->FetchFrom(rmRepertoireFile);
+		if(!rmRepertoire->estVide()){
+			delete rmRepertoireFile;
+			delete rmRepertoire;
+			printf("Le dossier que vous essayez de supprimer n'est pas vide\n");
+			return FALSE;
+		}
+		else if (rmRepertoire->estRoot()) {
+			delete rmRepertoireFile;
+			delete rmRepertoire;
+			printf("Le dossier que vous essayez de supprimer est le dossier root\n");
+			return FALSE;
+		} else if (sector == secteurCourant) {
+			delete rmRepertoireFile;
+			delete rmRepertoire;
+			printf("Vous vous trouvez actuellement dans le dossier que vous voulez supprimer\n");
+			return FALSE;
+		}
+	
+
+    freeMap = new BitMap(NumSectors);
+    freeMap->FetchFrom(freeMapFile);
+
+    fileHdr->Deallocate(freeMap);  		// remove data blocks
+
+    freeMap->Clear(sector);			// remove header block
+    directory->Remove(name);
+
+    freeMap->WriteBack(freeMapFile);		// flush to disk
+    directory->WriteBack(directoryFile);        // flush to disk
+
+    } else {
+        printf("Vous essayez de supprimer un fichier\n");
+	    return FALSE;
+    }
+    delete fileHdr;
+    delete directory;
+    delete freeMap;
+    return TRUE;
+
+}
+
+int
+FileSystem::MoveToSecteur(int secteur){
+    OpenFile * newDirectoryFile = new OpenFile(secteur);
+    directoryFile = newDirectoryFile;
+    return 1;
+}
+
+int
+FileSystem::MoveToRep(const char * name){
+    Directory * directory = new Directory(NumDirEntries);
+    directory->FetchFrom(directoryFile);
+    int idx = directory->Find(name);
+    FileHeader * fileHdr = new FileHeader;
+    fileHdr->FetchFrom(idx);
+
+	if(fileHdr->estRepertoire()) {    
+            MoveToSecteur(idx);
+            delete directory;
+            return 1;
+    } else {
+            printf("Cet élément n'est pas un dossier\n");
+            delete directory;
+            return 0;
+    } 
+}

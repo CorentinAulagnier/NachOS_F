@@ -52,6 +52,8 @@ class Directory {
   public:
     Directory(int size); 		// Initialize an empty directory
 					// with space for "size" files
+    Directory(int size, int sector, int sectorParent);
+
     ~Directory();			// De-allocate the directory
 
     void FetchFrom(OpenFile *file);  	// Init directory contents from disk
@@ -71,6 +73,13 @@ class Directory {
 					//  of the directory -- all the file
 					//  names and their contents.
 
+    bool estPlein();
+
+    bool estVide();
+
+    int secteurCourant();
+
+    bool estRoot();
   private:
     int tableSize;			// Number of directory entries
     DirectoryEntry *table;		// Table of pairs: 

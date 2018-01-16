@@ -69,6 +69,47 @@ Copy(const char *from, const char *to)
     fclose(fp);
 }
 
+void
+CreateDir(const char *from)
+{
+	fileSystem->CreateDir(from);
+}
+
+void
+RemoveFile(const char *from)
+{
+	fileSystem->Remove (from);
+}
+void
+FsList()
+{
+	fileSystem->List ();	
+}
+
+void
+PrintAll()
+{
+	fileSystem->Print ();
+}
+
+void
+CreateFile(const char *from, int to)
+{
+	fileSystem->Create(from, to);
+}
+
+void
+MoveToDir(const char *to)
+{
+	fileSystem->MoveToRep(to);
+}
+
+void
+RmDir(const char *from)
+{
+	fileSystem->RmDir(from);
+}
+
 //----------------------------------------------------------------------
 // Print
 // 	Print the contents of the Nachos file "name".

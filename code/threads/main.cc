@@ -67,7 +67,10 @@ extern void ReceptionTest (int farAddr, float reli);
 extern void testRequest();
 extern void Client(int id);
 extern void Serveur(int id);
-
+extern void CreateDir(const char *file), RemoveFile(const char *file);
+extern void FsList(void), PrintAll(void);
+extern void CreateFile(const char* file, int size), MoveToDir(const char *file);
+extern void RmDir(const char *file);
 //----------------------------------------------------------------------
 // main
 //      Bootstrap the operating system kernel.  
@@ -135,36 +138,66 @@ main (int argc, char **argv)
           }
 #endif // USER_PROGRAM
 #ifdef FILESYS
-	  if (!strcmp (*argv, "-cp"))
-	    {			// copy from UNIX to Nachos
-		ASSERT (argc > 2);
-		Copy (*(argv + 1), *(argv + 2));
-		argCount = 3;
-	    }
-	  else if (!strcmp (*argv, "-p"))
-	    {			// print a Nachos file
-		ASSERT (argc > 1);
-		Print (*(argv + 1));
-		argCount = 2;
-	    }
-	  else if (!strcmp (*argv, "-r"))
-	    {			// remove Nachos file
-		ASSERT (argc > 1);
-		fileSystem->Remove (*(argv + 1));
-		argCount = 2;
-	    }
-	  else if (!strcmp (*argv, "-l"))
-	    {			// list Nachos directory
-		fileSystem->List ();
-	    }
-	  else if (!strcmp (*argv, "-D"))
-	    {			// print entire filesystem
-		fileSystem->Print ();
-	    }
-	  else if (!strcmp (*argv, "-t"))
-	    {			// performance test
-		PerformanceTest ();
-	    }
+	  if (!strcmp (*argv, "-testfile")) {
+    char buffer[60];
+        while(1) {
+          fgets(buffer,60,stdin);
+
+        char ** args  = NULL;
+        char *  p    = strtok (buffer, " ");
+        int n_spaces = 0;
+
+
+        /* split string and append tokens to 'res' */
+
+        while (p) {
+          args = (char**)realloc (args, sizeof (char*) * ++n_spaces);
+
+          if (args == NULL)
+            exit (-1); /* memory allocation failed */
+
+          args[n_spaces-1] = p;
+
+          p = strtok (NULL, " ");
+        }
+
+        /* realloc one extra element for the last NULL */
+
+        args = (char**)realloc (args, sizeof (char*) * (n_spaces+1));
+        args[n_spaces] = 0;
+
+        char *pos;
+        if ((pos=strchr(args[n_spaces-1], '\n')) != NULL)
+        *pos = '\0';
+
+
+/*for (i = 0; i < (n_spaces+1); ++i)
+  printf ("res[%d] = %s\n", i, args[i]); */
+
+	      if (!strcmp(args[0],"mkdir")) {
+                CreateDir(args[1]);
+            } else if (!strcmp(args[0],"cp")) {
+			    Copy (args[1],args[2]);	
+		    } else if (!strcmp(args[0],"p")) {
+			    Print (args[1]);
+		    } else if (!strcmp(args[0],"r")) {
+                RemoveFile(args[1]);
+		    } else if (!strcmp(args[0],"l")) {
+                FsList();
+		    } else if (!strcmp(args[0],"D")) {
+                PrintAll();
+		    } else if (!strcmp(args[0],"t")) {
+                PerformanceTest();
+		    } else if (!strcmp(args[0],"mkfile")) {
+                CreateFile(args[1], atoi(args[2]));
+		    } else if (!strcmp(args[0],"cd")) {
+                MoveToDir(args[1]);
+		    } else if (!strcmp(args[0],"rmdir")) {
+                RmDir(args[1]);
+		    }
+
+        }
+    }
 #endif // FILESYS
 #ifdef NETWORK
 	  if (!strcmp (*argv, "-o"))
