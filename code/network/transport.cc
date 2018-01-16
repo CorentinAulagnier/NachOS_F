@@ -55,7 +55,7 @@ bool Transport::send(int to, void* content, int sizeContent){
             char size[MAX_INT_SIZE];
             sprintf(size,"%d", sizeContent);
             trySuccess = trySend(to, i, (void *)size, strlen(size));
-
+            
         } else { // paquet donnees
             /* Envoie des paquets */
             bzero(buff, MaxMailSize+1);
@@ -93,7 +93,7 @@ bool sendingLoop(PacketHeader outPktHdr, MailHeader outMailHdr, void* content) {
     
     // Boucle réémission avec vérif toutes les 5 secondes
     for (int i = 1; i < MAXREEMISSIONS; i++) {
-        if(ackReceive(outMailHdr.to, outMailHdr.numPaquet)) {
+        if(ackReceive(outPktHdr.to, outMailHdr.numPaquet)) {
             return true;
         }
         Delay (TEMPO);  
@@ -109,11 +109,10 @@ bool ackReceive(int fromMachine, int numPaquet){
     PacketHeader pktHdr;
     MailHeader mailHdr;
     char data[] = "MAIL ERROR";
-    
+
     while (!messages->IsEmpty()){
         postOffice->Receive(1, &pktHdr, &mailHdr, data);
-        
-        if (pktHdr.from == fromMachine && mailHdr.numPaquet == numPaquet && mailHdr.ack == 1){      
+        if (pktHdr.from == fromMachine && mailHdr.numPaquet == numPaquet && mailHdr.ack == 1){
             return true;
         }
     }
@@ -148,7 +147,7 @@ bool Transport::receive(int from, void* content){
   
         if (i == 0) {
             /* Reception taille fichier */
-            postOffice->Receive(1, &pktHdr, &mailHdr, buffer); 
+            postOffice->Receive(1, &pktHdr, &mailHdr, buffer);
             
             /* Envoie ack taille fichier */
             ackSuccess = tryAck(pktHdr.from, i, false);
@@ -216,7 +215,9 @@ bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck)
     if (lastAck) reemission = (int)reemission/2;
     
     for (int i = 1; i < reemission; i++) {
+
         if(nextReceive(outPktHdr.to, outMailHdr.numPaquet)) {
+
             return true;
         }
         Delay (TEMPO);
@@ -265,4 +266,19 @@ MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size
     outMailHdr.numPaquet = numPaquet;
     outMailHdr.ack = ack;
     return outMailHdr;
+}
+
+void Transport::viderReception(){
+    
+    MailBox* box = postOffice->GetBox(1);
+    SynchList* messages = box->GetMessages();
+    char data[] = "MAIL ERROR";
+    PacketHeader outPktHdr;	  
+    MailHeader outMailHdr;
+
+    while (!messages->IsEmpty()){
+        postOffice->Receive(1, &outPktHdr, &outMailHdr, data);
+    }
+    
+    //printf("\nBoite vide\n");
 }

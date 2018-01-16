@@ -20,6 +20,10 @@ class Transport {
          */
         bool receive(int from, void* content);
         
+        /* Vide la boite de reception (boite n°1) 
+         */
+        void viderReception();
+        
         
     private :
       //  Semaphore reception;
@@ -76,4 +80,3 @@ bool nextReceive(int fromMachine, int numPaquet);
  */
 PacketHeader creerPacketHeader(int to, int from);
 MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size, int ack);
-
