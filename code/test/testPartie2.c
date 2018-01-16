@@ -77,6 +77,18 @@ void testPutInt() {
     i = 9999;PutInt(i);
     PutString("\n- Fin testPutInt -\n");
 }
+void testPutIntMax() {
+    PutString("\n- Lancement testPutIntMax -\n");
+    int i;
+    for(i = 0; i<1000000000; i = i + 10000) {
+        PutInt(i);
+        PutChar('\n');
+    }
+    
+    PutInt(i-1);
+    
+    PutString("\n- Fin testPutIntMax -\n");
+}
 void testGetChar() {
     PutString("\n- Lancement testGetChar -\n");
     PutString("\n- Ecrivez un caractere, il sera reecrit apres ! -\n");
@@ -132,6 +144,7 @@ int main() {
         PutString("\t 4 - GetChar\n");
         PutString("\t 5 - GetString\n");
         PutString("\t 6 - GetInt\n");
+        PutString("\t 7 - PutIntMax\n");
         PutString("\t 0 - Exit\n");
         c = GetChar();
         if(c=='\n') {
@@ -155,6 +168,9 @@ int main() {
         break;
         case '6':
             testGetInt();
+        break;
+        case '7':
+            testPutIntMax();
         break;
         default :
             PutString("Test non reconnu\n\n");
