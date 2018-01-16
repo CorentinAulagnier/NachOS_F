@@ -47,6 +47,7 @@ class MailHeader {
     unsigned length;		// Bytes of message data (excluding the 
 				// mail header)
     int numPaquet;
+    int ack;
 };
 
 // Maximum "payload" -- real data -- that can included in a single message

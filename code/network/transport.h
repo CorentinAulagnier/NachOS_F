@@ -75,5 +75,5 @@ bool nextReceive(int fromMachine, int numPaquet);
 /* Cree les PacketHeader et MailHeader correspondant au parametres
  */
 PacketHeader creerPacketHeader(int to, int from);
-MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size);
+MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size, int ack);
 

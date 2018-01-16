@@ -173,34 +173,37 @@ main (int argc, char **argv)
 		Delay (2);	// delay for 2 seconds
 		// to give the user time to 
 		// start up another nachos
-        
-
-            /* Test mail simple */
-        /*
-		MailTest (atoi (*(argv + 1)));
-		*/
 		
-		    /* Boucle N machines */
-		/*
-        int N = atoi (*(argv + 1));
-		Boucle ((postOffice->GetAdd() + 1 ) % N);
-		*/
-
-		    /* Test Protocole transport */	
-
-
+        char* c = *(argv + 2);
+        printf("c = %c\n",c[0]);
+        if (c[0] == 't') { /* Test mail simple */
+		    MailTest (atoi (*(argv + 1)));
         
-        float reli = atof(*(argv + 3));
-        if (reli == 0) reli = 1;	
+        } else if (c[0] == 'm') { /* Test Protocole transport */
+
+                float reli = atof(*(argv + 4));
+                if (reli == 0) reli = 1;
+
+                if ((atoi (*(argv - 1))) == 0) {
+                    EnvoiTest (atoi (*(argv + 1)), reli);
+                } else if ((atoi (*(argv - 1))) == 1) {
+                    ReceptionTest (atoi (*(argv + 1)), reli);
+                }
         
-        if ((atoi (*(argv - 1))) == 0) {
-            Serveur (atoi (*(argv + 1)));
-        } else if ((atoi (*(argv - 1))) == 1) {
-            Client (atoi (*(argv + 1)));
+        } else if (c[0] == 'f') { /* Test Protocole fichier */
+                float reli = atof(*(argv + 4));
+                if (reli == 0) reli = 1;
+
+                if ((atoi (*(argv - 1))) == 0) {
+                    Client (atoi (*(argv + 1)));
+                } else if ((atoi (*(argv - 1))) == 1) {
+                    Serveur (atoi (*(argv + 1)));
+                }
+        
+        } else { // erreur
+            printf("Test network non reconnu");
         }
-        
-        
-        
+
 		argCount = 2;
 	    }
 #endif // NETWORK

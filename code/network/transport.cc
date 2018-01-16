@@ -54,7 +54,7 @@ bool Transport::send(int to, void* content, int sizeContent){
             /* Envoie de la taille du message */
             char size[MAX_INT_SIZE];
             sprintf(size,"%d", sizeContent);
-            trySuccess = trySend(to, i, (void *)size, sizeof(size));
+            trySuccess = trySend(to, i, (void *)size, strlen(size));
 
         } else { // paquet donnees
             /* Envoie des paquets */
@@ -81,7 +81,7 @@ bool Transport::send(int to, void* content, int sizeContent){
 bool trySend(int to, int numPaquet, void* content, int sizeMail){
     
     PacketHeader outPktHdr = creerPacketHeader(to, postOffice->GetAdd());	  
-    MailHeader outMailHdr = creerMailHeader(1, 0, numPaquet, sizeMail);
+    MailHeader outMailHdr = creerMailHeader(1, 0, numPaquet, sizeMail, 0);
 
     return sendingLoop(outPktHdr, outMailHdr, content);
 }
@@ -113,8 +113,7 @@ bool ackReceive(int fromMachine, int numPaquet){
     while (!messages->IsEmpty()){
         postOffice->Receive(1, &pktHdr, &mailHdr, data);
         
-        if (pktHdr.from == fromMachine && mailHdr.numPaquet == numPaquet &&
-        !strcmp(data,ACK)) {
+        if (pktHdr.from == fromMachine && mailHdr.numPaquet == numPaquet && mailHdr.ack == 1){      
             return true;
         }
     }
@@ -153,7 +152,7 @@ bool Transport::receive(int from, void* content){
             
             /* Envoie ack taille fichier */
             ackSuccess = tryAck(pktHdr.from, i, false);
-            
+
             /* Calcul du nb de paquets du message */
             nbPaquets = atoi(buffer)/MaxMailSize;
             if (atoi(buffer)%MaxMailSize > 0 ) nbPaquets++;
@@ -204,14 +203,14 @@ bool Transport::receive(int from, void* content){
 bool tryAck(int to, int numPaquet, bool lastAck){
     
     PacketHeader outPktHdr = creerPacketHeader(to, postOffice->GetAdd());	  
-    MailHeader outMailHdr = creerMailHeader(1, 0, numPaquet, sizeof(ACK));
+    MailHeader outMailHdr = creerMailHeader(1, 0, numPaquet, 0, 1);
 
     return sendingAckLoop(outPktHdr, outMailHdr, lastAck);
 }
 
 bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck){
 
-    postOffice->Send(outPktHdr, outMailHdr, ACK);
+    postOffice->Send(outPktHdr, outMailHdr, "");
 
     int reemission = MAXREEMISSIONS;
     if (lastAck) reemission = (int)reemission/2;
@@ -221,7 +220,7 @@ bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck)
             return true;
         }
         Delay (TEMPO);
-        postOffice->Send(outPktHdr, outMailHdr, ACK);
+        postOffice->Send(outPktHdr, outMailHdr, "");
     }
     return lastAck;
 }
@@ -258,11 +257,12 @@ PacketHeader creerPacketHeader(int to, int from){
     return outPktHdr;
 }
 
-MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size){
+MailHeader creerMailHeader(int numBoxTo, int numBoxFrom, int numPaquet, int size, int ack){
     MailHeader outMailHdr;
     outMailHdr.to = numBoxTo;
     outMailHdr.from = numBoxFrom;
     outMailHdr.length = size;
     outMailHdr.numPaquet = numPaquet;
+    outMailHdr.ack = ack;
     return outMailHdr;
 }
