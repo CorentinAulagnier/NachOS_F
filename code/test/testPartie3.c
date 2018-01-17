@@ -95,15 +95,20 @@ void test_bcp() {
 }
 
 void test_trop_de_threads() {
-    PutString("***** Test n°4: Dépacement nombres de threads *****\n");
-    PutString("5 threads lancés simultanément, gestion du dépacement du nombre maximum de threads fixé à 4");
+    PutString("***** Test n°4: Dépassement nombres de threads *****\n");
+    PutString("100 threads lancés simultanément, gestion du dépassement du nombre maximum de threads");
     PutString(" (5-1 pour le main)\n");
     int i;
-    int n[5] = {10,11,12,13,14};
-    int tids[5];
+    int nbthread = 100;
+    int n[nbthread];
+    for( i = 0; i<nbthread; i++) {
+        n[i] = 10 + i;
+    }
+    
+    int tids[nbthread];
     
     //vérification de la réussite de la création des threads
-    for(i = 0; i<5; i++) {
+    for(i = 0; i<nbthread; i++) {
         tids[i] = UserThreadCreate(&f2, &n[i]);
         if(tids[i] == 0) {
             PutString("La création du ");
@@ -120,13 +125,13 @@ void test_trop_de_threads() {
     }
 
     //récupération des threads se terminant
-    for(i = 0; i<5; i++) {
+    for(i = 0; i<nbthread; i++) {
         if(tids[i] != 0) {
             UserThreadJoin(tids[i]);
         }
     }
     
-    PutString("\n***** Fin Test n°4: Dépacement nombres de threads *****\n\n");
+    PutString("\n***** Fin Test n°4: Dépassement nombres de threads *****\n\n");
 }
 
 void test_robustesse() {
