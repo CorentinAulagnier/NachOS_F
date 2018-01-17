@@ -61,7 +61,7 @@ Directory::Directory(int size, int sector, int sectorParent)
     tableSize = size;
     for (int i = 2; i < tableSize; i++)
 	table[i].inUse = FALSE;
-    printf("create sector : %d\n",sector);
+
 	table[0].inUse = true;
 	table[0].sector = sector;
 	strcpy(table[0].name,".");
@@ -257,6 +257,5 @@ Directory::secteurCourant()
 bool
 Directory::estRoot()
 {
-        printf("sector parent : %d || sector soi même : %d\n",this->table[0].sector, this->table[1].sector);
     return (this->table[0].sector == this->table[1].sector);
 }

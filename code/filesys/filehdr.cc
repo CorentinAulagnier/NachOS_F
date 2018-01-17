@@ -27,7 +27,7 @@
 #include "system.h"
 #include "filehdr.h"
 
-#define nbIndirectParSecteur (int)(SectorSize / sizeof(int))
+#define nbIndirectParSecteur ((SectorSize) / sizeof(int))
 
 //----------------------------------------------------------------------
 // FileHeader::Allocate
@@ -44,6 +44,7 @@ bool
 FileHeader::Allocate(BitMap *freeMap, int fileSize)
 { 
     int nbDejaAlloues = 0;
+    int * tabIndirect;
     numBytes = fileSize;
     numSectors  = divRoundUp(FileLength(), SectorSize);
     if (freeMap->NumClear() < numSectors)
@@ -51,9 +52,8 @@ FileHeader::Allocate(BitMap *freeMap, int fileSize)
 
     for (int i = 0; (i < (int)NumDirect) && (nbDejaAlloues < numSectors); i++) {
 	    dataSectors[i] = freeMap->Find();
-
-        int tabIndirect[nbIndirectParSecteur];
-        for(int j = 0; (j<nbIndirectParSecteur) && (nbDejaAlloues < numSectors); j++){
+        tabIndirect = new int[nbIndirectParSecteur];
+        for(int j = 0; (j< (int)nbIndirectParSecteur) && (nbDejaAlloues < numSectors); j++){
             tabIndirect[j] = freeMap->Find();
             nbDejaAlloues++;
         }
@@ -72,15 +72,16 @@ FileHeader::Allocate(BitMap *freeMap, int fileSize)
 void 
 FileHeader::Deallocate(BitMap *freeMap)
 {
+    int * tabIndirect;
     int nbDejaLibere = 0;
 
     for (int i = 0; (i < (int)NumDirect) && (nbDejaLibere < numSectors); i++) {
 	    ASSERT(freeMap->Test((int) dataSectors[i]));  // ought to be marked!
 
-        int tabIndirect[nbIndirectParSecteur];
+        tabIndirect = new int[nbIndirectParSecteur];
         synchDisk->ReadSector(dataSectors[i], (char *)tabIndirect); 
 
-        for(int j = 0; (j<nbIndirectParSecteur) && (nbDejaLibere < numSectors); j++){
+        for(int j = 0; (j< (int)nbIndirectParSecteur) && (nbDejaLibere < numSectors); j++){
             freeMap->Clear((int) tabIndirect[j]);
             nbDejaLibere++;
         }
@@ -128,11 +129,12 @@ FileHeader::WriteBack(int sector)
 int
 FileHeader::ByteToSector(int offset)
 {
+    int * tabIndirect;
     int sector = offset / SectorSize;
     int numIndirect = sector / nbIndirectParSecteur;
     int numDansListeIndirect = sector % nbIndirectParSecteur;
 
-    int tabIndirect[nbIndirectParSecteur];
+    tabIndirect = new int[nbIndirectParSecteur];
 
     synchDisk->ReadSector(dataSectors[numIndirect], (char *)tabIndirect);
     return(tabIndirect[numDansListeIndirect]);
@@ -158,15 +160,14 @@ FileHeader::FileLength()
 void
 FileHeader::Print()
 {
-    int i, j, k;
     char *data = new char[SectorSize];
 
     printf("FileHeader contents.  File size: %d.  File blocks:\n", numBytes);
-    for (i = 0; i < numSectors; i++)
-	printf("%d ", dataSectors[i]);
+    /*for (i = 0; i < numSectors; i++)
+	printf("%d ", (int)dataSectors[i]);
     printf("\nFile contents:\n");
     for (i = k = 0; i < numSectors; i++) {
-	synchDisk->ReadSector(dataSectors[i], data);
+	synchDisk->ReadSector((int)dataSectors[i], data);
         for (j = 0; (j < SectorSize) && (k < numBytes); j++, k++) {
 	    if ('\040' <= data[j] && data[j] <= '\176')   // isprint(data[j])
 		printf("%c", data[j]);
@@ -175,6 +176,7 @@ FileHeader::Print()
 	}
         printf("\n"); 
     }
+*/
     delete [] data;
 }
 

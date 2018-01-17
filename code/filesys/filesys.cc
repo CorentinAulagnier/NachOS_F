@@ -279,7 +279,6 @@ FileSystem::Remove(const char *name)
 
     fileHdr->Deallocate(freeMap);  		// remove data blocks
 
-printf("filesys 1\n");
     freeMap->Clear(sector);			// remove header block
     directory->Remove(name);
 

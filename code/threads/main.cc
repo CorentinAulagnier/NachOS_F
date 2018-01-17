@@ -143,6 +143,8 @@ main (int argc, char **argv)
 	  if (!strcmp (*argv, "-testfile")) {
     char buffer[60];
         while(1) {
+          printf(">");
+
           fgets(buffer,60,stdin);
 
         char ** args  = NULL;
@@ -175,20 +177,20 @@ main (int argc, char **argv)
 
 /*for (i = 0; i < (n_spaces+1); ++i)
   printf ("res[%d] = %s\n", i, args[i]); */
-
+           printf("\n");
 	      if (!strcmp(args[0],"mkdir")) {
                 CreateDir(args[1]);
             } else if (!strcmp(args[0],"cp")) {
 			    Copy (args[1],args[2]);	
-		    } else if (!strcmp(args[0],"p")) {
+		    } else if (!strcmp(args[0],"print")) {
 			    Print (args[1]);
-		    } else if (!strcmp(args[0],"r")) {
+		    } else if (!strcmp(args[0],"rmfile")) {
                 RemoveFile(args[1]);
-		    } else if (!strcmp(args[0],"l")) {
+		    } else if (!strcmp(args[0],"ls")) {
                 FsList();
 		    } else if (!strcmp(args[0],"D")) {
                 PrintAll();
-		    } else if (!strcmp(args[0],"t")) {
+		    } else if (!strcmp(args[0],"perf")) {
                 PerformanceTest();
 		    } else if (!strcmp(args[0],"mkfile")) {
                 CreateFile(args[1], atoi(args[2]));
@@ -196,8 +198,17 @@ main (int argc, char **argv)
                 MoveToDir(args[1]);
 		    } else if (!strcmp(args[0],"rmdir")) {
                 RmDir(args[1]);
+		    } else if (!strcmp(args[0],"help")) {
+                printf("\nCommandes possibles : \n\ncp\nprintf\nrmfile\nls\nD\nperf\nmkfile\ncd\nrmdir\nhelp\nexit\nformat (CAREFUL)\n");
+		    } else if (!strcmp(args[0],"exit")) {
+                return 1;
+		    } else if (!strcmp(args[0],"format")) {
+                fileSystem = new FileSystem (TRUE);
+                printf("Le système de fichier à été ré-initialisé\n");
+		    } else {
+                printf("Commande inconnue\n");
 		    }
-
+           printf("\n");
         }
     }
 #endif // FILESYS

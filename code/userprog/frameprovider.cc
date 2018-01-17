@@ -10,6 +10,7 @@
 FrameProvider::FrameProvider (int nitems)
 {
     int timem = time(NULL);
+    //int timem = 1516177185;
     RandomInit(timem);
     printf("time := %d\n",timem);
 
