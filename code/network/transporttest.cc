@@ -10,16 +10,16 @@
 void vider(){
     
     MailBox* box = postOffice->GetBox(1);
+    if (box == NULL) return;
     SynchList* messages = box->GetMessages();
+    if (messages == NULL) return;
+
     char data[] = "MAIL ERROR";
     PacketHeader outPktHdr;	  
     MailHeader outMailHdr;
-
     while (!messages->IsEmpty()){
         postOffice->Receive(1, &outPktHdr, &outMailHdr, data);
     }
-    
-printf("\nBoite vide\n");
 }
 
 void
@@ -73,7 +73,9 @@ ReceptionTest(int farAddr, float reli)
             printf("Receive OK ! \n");
             printf("Message : \n\"%s\"\n",message);
         }
-        else printf("Receive ERROR !\n");
+        else {
+            printf("Receive ERROR !\n");
+        }
         
         vider();
     }

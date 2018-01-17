@@ -8,33 +8,9 @@ static float TEMPO;
 
 Transport::Transport(float reemission)
 {
-
-        MAXREEMISSIONS = 50;
-        TEMPO = 1;
-        DELAY_END = 10;
-
-/*
-40 2 20 
-*/
-
-/*
-    if (reemission == 1) {
-        MAXREEMISSIONS = 10;
-        TEMPO = 2;
-        DELAY_END = 15;
-    } else if (reemission >= 0.5) {
-        MAXREEMISSIONS = 15;
-        TEMPO = 0.75;
-        DELAY_END = 15;
-    } else if (reemission >= 0.3) {
-        MAXREEMISSIONS = 20;
-        TEMPO = 1;
-        DELAY_END = 15;
-    } else {
-        MAXREEMISSIONS = 40;
-        TEMPO = 0.5;
-        DELAY_END = 15;
-    }*/
+    MAXREEMISSIONS = 40;
+    TEMPO = 2;
+    DELAY_END = 20;
 }
 
 Transport::~Transport()
@@ -158,7 +134,7 @@ bool Transport::receive(int from, void* content){
         if (i == 0) {
             /* Reception taille fichier */
             postOffice->Receive(1, &pktHdr, &mailHdr, buffer);
-            while (mailHdr.ack == 1){
+            while (mailHdr.ack == 1 || mailHdr.numPaquet != 0 ){
                 postOffice->Receive(1, &pktHdr, &mailHdr, buffer);
             }
             
