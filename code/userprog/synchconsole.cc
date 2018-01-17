@@ -53,10 +53,11 @@ char SynchConsole::ReadChar(){
 
 void SynchConsole::LectureChaine(char *s, int n) {
     int i;
-    for(i = 0; i<n; i++) {
+    for(i = 0; (i+1)<n; i++) {
         s[i] = ReadChar();
         if(s[i] == '\n') break;
     }
+
     s[i] = '\0';
 
 }
