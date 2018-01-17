@@ -103,6 +103,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     NoffHeader noffH;
     unsigned int i, size;
 
+    this->validSpace = true;
 
 	this->tokillby = -1;
 
@@ -148,7 +149,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
     // virtual memory
 
     if((unsigned int)frameprovider->NumAvailFrame() < numPages){
-        return;
+          this->validSpace = false;
+          return;
     }
 
     DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
@@ -159,7 +161,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     for (i = 0; i < numPages; i++) {
       verif = frameprovider->GetEmptyFrame();
       if(verif == -1){
-          printf("Erreur : il fallait faire une fonction bébé chien \n"); // NE DOIT JAMAIS PASSER ICI
+          this->validSpace = false;
           return;
       }
 
