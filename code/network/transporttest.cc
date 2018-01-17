@@ -1,21 +1,3 @@
-// nettest.cc 
-//	Test out message delivery between two "Nachos" machines,
-//	using the Post Office to coordinate delivery.
-//
-//	Two caveats:
-//	  1. Two copies of Nachos must be running, with machine ID's 0 and 1:
-//		#include "network.h"./nachos -m 0 -o 1 &
-//		./nachos -m 1 -o 0 &
-//
-//	  2. You need an implementation of condition variables,
-//	     which is *not* provided as part of the baseline threads 
-//	     implementation.  The Post Office won't work without
-//	     a correct implementation of condition variables.
-//
-// Copyright (c) 1992-1993 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
-// of liability and disclaimer of warranty provisions.
-
 #include "copyright.h"
 
 #include "system.h"
@@ -44,12 +26,14 @@ void
 EnvoiTest(int farAddr, float reli)
 {
     Transport* t = new Transport(reli);
+    vider();
     
     char message[5][MAX_STRING_SIZE];
+
     strcpy(message[0],"Hello");
     strcpy(message[1], "_CouCou_!");
     strcpy(message[2], "%*µ£µµ%£2345678*");
-    strcpy(message[3], "Bonjour_nous_sommes_le_groupe_F!");
+    strcpy(message[3], "Bonjour nous sommes le groupe F!");
     strcpy(message[4], "Une sphère mouvante désigne un ensemble de cercles figurant le système solaire en tout ou partie. ");
 
     for (int i = 0; i<5; i++) {
@@ -73,9 +57,10 @@ void
 ReceptionTest(int farAddr, float reli)
 {
     Transport* t = new Transport(reli);
+    vider();
     
     char message[MAX_BUFFER_SIZE];
- 
+        
     for (int i = 0; i<5; i++) {
 
 

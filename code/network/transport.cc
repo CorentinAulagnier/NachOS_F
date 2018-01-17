@@ -8,23 +8,33 @@ static float TEMPO;
 
 Transport::Transport(float reemission)
 {
+
+        MAXREEMISSIONS = 50;
+        TEMPO = 1;
+        DELAY_END = 10;
+
+/*
+40 2 20 
+*/
+
+/*
     if (reemission == 1) {
         MAXREEMISSIONS = 10;
-        TEMPO = 1;
-        DELAY_END = 5;
+        TEMPO = 2;
+        DELAY_END = 15;
     } else if (reemission >= 0.5) {
         MAXREEMISSIONS = 15;
-        TEMPO = 1;
-        DELAY_END = 10;
+        TEMPO = 0.75;
+        DELAY_END = 15;
     } else if (reemission >= 0.3) {
-        MAXREEMISSIONS = 25;
+        MAXREEMISSIONS = 20;
         TEMPO = 1;
-        DELAY_END = 10;
-    } else  {
-        MAXREEMISSIONS = 70;
-        TEMPO = 1;
-        DELAY_END = 20;
-    }
+        DELAY_END = 15;
+    } else {
+        MAXREEMISSIONS = 40;
+        TEMPO = 0.5;
+        DELAY_END = 15;
+    }*/
 }
 
 Transport::~Transport()
@@ -215,7 +225,7 @@ bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck)
     postOffice->Send(outPktHdr, outMailHdr, "");
 
     int reemission = MAXREEMISSIONS;
-    if (lastAck) reemission = (int)reemission/2;
+    if (lastAck) reemission = (int)reemission/4;
     
     for (int i = 1; i < reemission; i++) {
 

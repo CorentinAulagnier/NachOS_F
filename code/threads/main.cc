@@ -210,33 +210,34 @@ main (int argc, char **argv)
 		// start up another nachos
 		
         char* c = *(argv + 2);
-        printf("c = %c\n",c[0]);
+        DEBUG ('w',"c = %c\n",c[0]);
+        
+        float rely = atof(*(argv + 4));
+        if (rely == 0) rely = 1;
+                
         if (c[0] == 't') { /* Test mail simple */
 		    MailTest (atoi (*(argv + 1)));
         
         } else if (c[0] == 'm') { /* Test Protocole transport */
 
-                float rely = atof(*(argv + 4));
-                if (rely == 0) rely = 1;
-
-                if ((atoi (*(argv - 1))) == 0) {
+                if ((atoi (*(argv - 1))) == 0) { // Machine 0
                     EnvoiTest (atoi (*(argv + 1)), rely);
-                } else if ((atoi (*(argv - 1))) == 1) {
+                    
+                } else if ((atoi (*(argv - 1))) == 1) { // Machine 1
                     ReceptionTest (atoi (*(argv + 1)), rely);
                 }
         
         } else if (c[0] == 'f') { /* Test Protocole fichier */
-                float rely = atof(*(argv + 4));
-                if (rely == 0) rely = 1;
 
-                if ((atoi (*(argv - 1))) == 0) {
+                if ((atoi (*(argv - 1))) == 0) { // Machine 0
                     ServeurLoop (atoi (*(argv + 1)),rely);
-                } else if ((atoi (*(argv - 1))) == 1) {
+                    
+                } else if ((atoi (*(argv - 1))) == 1) { // Machine 1
                     ClientLoop (atoi (*(argv + 1)),rely);
                 }
         
         } else { // erreur
-            printf("Test network non reconnu");
+            printf("Test network non reconnu\n");
         }
 
 		argCount = 2;
