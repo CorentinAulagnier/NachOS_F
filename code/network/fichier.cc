@@ -14,7 +14,7 @@ FileRequest::FileRequest(int t, char *fname) {
 FileRequest::~FileRequest() {
 }
 
-
+char error[] = "ERR_NOT_PRESENT";
 
 void testRequest() {
     FileRequest *request = new FileRequest(0, (char *)FILENAME, CONTENTSIZE);
@@ -126,7 +126,7 @@ bool createFile(char *fileName, char *content, int contentSize)
     OpenFile *openFile;    
     int numBytes;
 
-    if (!fileSystem->Create(fileName, 0)) {
+    if (!fileSystem->Create(fileName, contentSize)) {
       printf("Impossible de creer le fichier %s\n", fileName);
       return false;
     }
@@ -171,59 +171,103 @@ bool readFile(char *fileName, char *buffer, int contentSize)
     return true;
 }
 
-void Client(int to, float rely) { //ID: 1+
+void ClientFile(int to, float rely) { //ID: 1+
+        printf("BIENVENUE DANS LE CLIENT NACHOS\n");
     char buffRequest[MAXREQUESTSIZE];
     char buffContent[MAXFILESIZE];
-        //clean
+    //clean
     bzero(buffContent, MAXFILESIZE);
     bzero(buffRequest, MAXREQUESTSIZE);
     FileRequest *request;
     Transport *transport = new Transport(rely);
     
-    char contentClient[] = "je_suis_le_client"; //17
+    //creation un fichier
+    printf("Création du fichier %s\n", FILENAME);
+    createFile((char *)FILENAME, (char *)CONTENT, CONTENTSIZE);
     
-    //crée un fichier
-    //printf("Client: création du fichier %s\n", FILENAME);
-    //createFile((char *)FILENAME, (char *)CONTENT, CONTENTSIZE);
-    
-    //l'envoie au serveur
-    printf("Client: envoie du fichier %s au serveur\n", FILENAME);
-    
-    request = new FileRequest(0, (char *)FILENAME, strlen(contentClient));
-    createRequest(request, buffRequest);
+    while (1) {
+        printf("\n\nQuelle requête voulez vous lancer ?\n");
+        printf("\t 1 - Envoyer un fichier au serveur\n");
+        printf("\t 2 - Demander un fichier au serveur\n");
+        printf("\t 0 - Exit\n");
+        char c = getchar();
+        if(c=='\n') {
+            c = getchar();
+        }
+        switch (c) {
+            case '0':
+                printf("\n***** Fin des tests ******\n\n");
+                exit(0);
+                break;
+            case '1':
+                //l'envoie au serveur
+                printf("Client: envoie du fichier %s au serveur\n", FILENAME);
+                if(readFile((char *)FILENAME, buffContent, CONTENTSIZE)) {
+                    request = new FileRequest(0, (char *)FILENAME, CONTENTSIZE);
+                    createRequest(request, buffRequest);
+                    printRequest(request); 
+                    if(transport->send(to, buffRequest, strlen(buffRequest))) {
+                        printf("La requête a bien été envoyée.\n");
+                        printf("Contenu en cours d'envoi : |%s|\n",buffContent);
+                        if(transport->send(to, buffContent, strlen(buffContent))) {
+                            printf("Le fichier %s a bien été envoyé.\n",request->fileName);
+                        } else {
+                            printf("Le fichier %s mal été envoyé.\n",request->fileName);
+                        }
+                    } else {
+                        printf("Erreur lors de l'envoie de la requête.\n");
+                    }
+                        
+                } else {
+                        printf("La lecture du fichier %s sur votre machine a échoué.\n",FILENAME);
+                }
 
-    printf("buffRequest: %s, size = %d\n",buffRequest,strlen(buffRequest));
+            break;
+            
+            case '2':
+                //demande un fichier au serveur
+                printf("Client: demande du fichier %s au serveur\n", FILENAME);
+                
+                request = new FileRequest(1, (char *)FILENAME);
+                createRequest(request, buffRequest);
+                printRequest(request);
+                if(transport->send(to, buffRequest, strlen(buffRequest))) {
+                    printf("La requête a bien été envoyée.\n");
+                    transport->viderBoites();
+                    if(transport->receive(to, buffContent)) {
+                        int ret = strcmp(buffContent,error);
+                        if(ret != 0) {
+                            printf("Le fichier %s a bien été reçu.\n",request->fileName);
+                            printf("Contenu reçu : |%s|\n",buffContent);
+                            if(createFile(request->fileName, buffContent, request->contentSize)) {
+                                printf("Le fichier %s a bien été créé sur votre machine.\n",request->fileName);
+                            } else {
+                                printf("Impossible de créer le fichier %s sur votre machine.\n",request->fileName);
+                            }
+                        } else {
+                            printf("La requête n'a pas pu aboutir, le fichier %s n'est pas présent sur le serveur\n",request->fileName);
+                        }
+                    } else {
+                        printf("Erreur lors de la réception du contenu du fichier %s.\n",request->fileName);
+                    }
+                } else {
+                    printf("Erreur lors de l'envoie de la requête.\n");
+                }
 
-    if (transport->send(to, buffRequest, strlen(buffRequest)))
+                break;
+            default :
+                printf("Requête non reconnue\n\n");
+        }
+        
+        //clean en fin d'iteration
+        bzero(buffContent, MAXFILESIZE);
+        bzero(buffRequest, MAXREQUESTSIZE);
+        transport->viderBoites();
+    }
     
-        printf("send OK !\n");
-        else printf("send ERROR !\n");
-    printRequest(request); 
-    
-    //readFile((char *)FILENAME, buffContent, CONTENTSIZE);
-    transport->send(to, contentClient, strlen(contentClient));
-    
-    //clean
-    bzero(buffContent, MAXFILESIZE);
-    bzero(buffRequest, MAXREQUESTSIZE);
-    
-    //le redemande au serveur
-    printf("Client: demande du fichier %s au serveur\n", FILENAME);
-    
-    request = new FileRequest(1, (char *)FILENAME, 17);
-    createRequest(request, buffRequest);
-    transport->send(to, buffRequest, strlen(buffRequest));
-    printRequest(request);
-    
-    //TODO attend accord du serveur (ACK?)
-    transport->receive(to, buffContent);
-    printf("content reçu : |%s|\n",buffContent);
-    //createFile(request->fileName, buffContent, request->contentSize);
-    
-    //TODO compare les deux
 }
 
-void ClientLoop(int to, float rely) { //ID: 1+
+void ClientText(int to, float rely) { //ID: 1+
     printf("BIENVENUE DANS LE CLIENT NACHOS\n");
     char buffRequest[MAXREQUESTSIZE];
     char buffContent[MAXFILESIZE];
@@ -256,14 +300,10 @@ void ClientLoop(int to, float rely) { //ID: 1+
                 request = new FileRequest(0, (char *)FILENAME, strlen(contentClient));
                 createRequest(request, buffRequest);
 
-                //printf("buffRequest: %s, size: %d\n",buffRequest,strlen(buffRequest));
                 printRequest(request); 
                 transport->send(to, buffRequest, strlen(buffRequest));
 
-                
-                //readFile((char *)FILENAME, buffContent, CONTENTSIZE);
-                //transport->send(to, buffContent, strlen(buffContent));
-                printf("Contenu envoyé : |%s|\n",contentClient);
+                printf("Contenu en cours d'envoi : |%s|\n",contentClient);
                 if(transport->send(to, contentClient, strlen(contentClient))) {
                     printf("Le fichier %s a bien été envoyé.\n",request->fileName);
                 }
@@ -284,7 +324,6 @@ void ClientLoop(int to, float rely) { //ID: 1+
                     printf("Le fichier %s a bien été reçu.\n",request->fileName);
                 }
                 printf("Contenu reçu : |%s|\n",buffContent);
-                //createFile(request->fileName, buffContent, request->contentSize);
                 break;
             default :
                 printf("Requête non reconnue\n\n");
@@ -295,50 +334,71 @@ void ClientLoop(int to, float rely) { //ID: 1+
         bzero(buffRequest, MAXREQUESTSIZE);
         transport->viderBoites();
     }
-    
-    //creation un fichier
-    //printf("Client: création du fichier %s\n", FILENAME);
-    //createFile((char *)FILENAME, (char *)CONTENT, CONTENTSIZE);
 
 }
 
-void Serveur(int to, float rely) { //ID: 0
+void ServeurFile(int to, float rely) { //ID: 0
+                
     char buffRequest[MAXREQUESTSIZE];
     char buffContent[MAXFILESIZE];
     FileRequest *request;
     Transport *transport = new Transport(rely);
     
-    char contentServeur[] = "je_suis_le_serveur"; //18
+    while(1) {
+        printf("\n --- WAIT REQUEST ---\n\n");
+        if(transport->receive(to, buffRequest)) {
+            printf("La requête a bien été reçue.\n");
+            request = readRequest(buffRequest);
+            printRequest(request);
+            transport->viderBoites();
+            switch(request->type) {
+                case 0:  //le CLIENT envoie
+                    if(transport->receive(to, buffContent)) {
+                        printf("Le contenu du fichier %s a bien été reçu.\n",request->fileName);
+                        printf("Contenu reçu: |%s|\n",buffContent);
+                        if(createFile(request->fileName, buffContent, request->contentSize)) {
+                            printf("Le fichier %s a bien été enregistré sur le serveur.\n",request->fileName);
+                        } else {
+                            printf("Impossible d'enregistrer le fichier %s sur le serveur.\n",request->fileName);
+                        }
+                    } else {
+                        printf("Erreur lors de la réception du contenu du fichier %s.\n",request->fileName);
+                        
+                    }
 
-    printf("\n --- WAIT REQUEST ---\n\n");  
-    if (transport->receive(to, (void*)buffRequest)) 
-        printf("buffRequest: %s\n",buffRequest);
-    else
-        printf("ERROR !!\n");
-    
-    
-    
-    request = readRequest(buffRequest);
-    printRequest(request);
-
-    printf("receive\n");
-    transport->receive(to, buffContent);
-    printf("content reçu : |%s|\n",buffContent);
-    
-    printf("\n --- WAIT REQUEST ---\n\n");
-    transport->receive(to, buffRequest);
-    request = readRequest(buffRequest);
-    printRequest(request);
-    
-    printf("content envoyé : |%s|\n",contentServeur);
-    transport->send(to, contentServeur, request->contentSize);                  
-
+                    break;
+                
+                case 1: //le CLILENT reçoit
+                    if(readFile(request->fileName, buffContent, request->contentSize)) {
+                        printf("Contenu en cours d'envoi : |%s|\n",buffContent);
+                        if(transport->send(to, buffContent, strlen(buffContent))) {
+                            printf("Le fichier %s a bien été reçu.\n",request->fileName);
+                        } else {
+                            printf("Le fichier %s mal reçu.\n",request->fileName);
+                        }
+                    } else {
+                        printf("Impossible d'envoyer ce fichier.\n");
+                        
+                        if(transport->send(to, error, strlen(error))) {
+                            printf("Le code d'erreur %s a bien été envoyé.\n",error);
+                        } else {
+                            printf("Le code d'erreur %s n'a pas pu être envoyé.\n",error);
+                        }
+                    }
+                    break;               
+                
+                default : printf("Request error.\n");
+            }
+        } else {
+            printf("Erreur lors de la réception de la requête.\n");
+        }   
+    }
     
 }
 
-void ServeurLoop(int to, float rely) { //ID: 0
-    char *buffRequest = (char *)malloc(MAXREQUESTSIZE);
-    char *buffContent = (char *)malloc(MAXFILESIZE);
+void ServeurText(int to, float rely) { //ID: 0
+    char buffRequest[MAXREQUESTSIZE];
+    char buffContent[MAXFILESIZE];
     FileRequest *request;
     Transport *transport = new Transport(rely);
     
@@ -350,19 +410,16 @@ void ServeurLoop(int to, float rely) { //ID: 0
         request = readRequest(buffRequest);
         printRequest(request);
         transport->viderBoites();
-        switch(request->type) {//TODO
+        switch(request->type) {
             case 0:  //le CLIENT envoie
-                //repond ACK au client ?
                 if(transport->receive(to, buffContent)) {
                     printf("Le fichier %s a bien été reçu.\n",request->fileName);
                 }
                 printf("Contenu reçu: |%s|\n",buffContent);
-                //createFile(request->fileName, buffContent, request->contentSize);
                 break;
             
             case 1: //le CLILENT reçoit
-                //readFile(request->fileName, buffContent, request->contentSize);
-                printf("Contenu envoyé : |%s|\n",contentServeur);
+                printf("Contenu en cours d'envoi : |%s|\n",contentServeur);
                 if(transport->send(to, contentServeur, strlen(contentServeur))) {
                     printf("Le fichier %s a bien été reçu.\n",request->fileName);
                 } else {

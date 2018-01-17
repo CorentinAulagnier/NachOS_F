@@ -65,10 +65,10 @@ extern void Boucle (int farAddr);
 extern void EnvoiTest(int farAddr, float reli);
 extern void ReceptionTest (int farAddr, float reli);
 extern void testRequest();
-extern void Client(int to, float rely);
-extern void Serveur(int to, float rely);
-extern void ClientLoop(int to, float rely);
-extern void ServeurLoop(int to, float rely);
+extern void ClientText(int to, float rely);
+extern void ServeurText(int to, float rely);
+extern void ClientFile(int to, float rely);
+extern void ServeurFile(int to, float rely);
 extern void CreateDir(const char *file), RemoveFile(const char *file);
 extern void FsList(void), PrintAll(void);
 extern void CreateFile(const char* file, int size), MoveToDir(const char *file);
@@ -227,13 +227,20 @@ main (int argc, char **argv)
                     ReceptionTest (atoi (*(argv + 1)), rely);
                 }
         
-        } else if (c[0] == 'f') { /* Test Protocole fichier */
+        } else if (c[0] == 'z') { /* Test Protocole fichier version text */
 
-                if ((atoi (*(argv - 1))) == 0) { // Machine 0
-                    ServeurLoop (atoi (*(argv + 1)),rely);
-                    
-                } else if ((atoi (*(argv - 1))) == 1) { // Machine 1
-                    ClientLoop (atoi (*(argv + 1)),rely);
+                if ((atoi (*(argv - 1))) == 0) {
+                    ServeurText (atoi (*(argv + 1)),rely);
+                } else if ((atoi (*(argv - 1))) == 1) {
+                    ClientText (atoi (*(argv + 1)),rely);
+                }
+        
+        } else if (c[0] == 'f') { /* Test Protocole fichier version file*/
+
+                if ((atoi (*(argv - 1))) == 0) {
+                    ServeurFile (atoi (*(argv + 1)),rely);
+                } else if ((atoi (*(argv - 1))) == 1) {
+                    ClientFile (atoi (*(argv + 1)),rely);
                 }
         
         } else { // erreur

@@ -83,7 +83,7 @@ filesys-stub_CPPFLAGS=-DFILESYS_NEEDED -DFILESYS_STUB
 filesys-stub_INCDIRS=filesys
 
 # network: add network support
-network_DEP_ALT=thread-test userprog
+network_DEP_ALT=thread-test userprog filesys
 network_SRC=$(NETWORK_SRC)
 network_CPPFLAGS=-DNETWORK
 network_INCDIRS=network

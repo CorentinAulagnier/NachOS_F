@@ -28,7 +28,7 @@ void printRequest(FileRequest *request);
 bool readFile(char *fileName, char *buffer, int contentSize);
 bool createFile(char *fileName, char *content, int contentSize);
 
-void Client(int to, float rely);
-void Serveur(int to, float rely);
-void ServeurLoop(int to, float rely);
-void ClientLoop(int to, float rely);
+void ClientFile(int to, float rely);
+void ServeurFile(int to, float rely);
+void ServeurText(int to, float rely);
+void ClientText(int to, float rely);
