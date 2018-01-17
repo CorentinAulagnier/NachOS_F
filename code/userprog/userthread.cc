@@ -29,6 +29,7 @@ int do_UserThreadCreate(int f, int arg, int fct_fin) {
     /* On ajoute un thread au processus + On enregistre le numéro du thread*/
     int test = currentThread->space->structNbThreads->Find();
     if(test == -1){
+        printf("Il n'y a pas de place pour un nouveau thread\n");
         currentThread->space->semNbThread->V();
         return -1;
     }

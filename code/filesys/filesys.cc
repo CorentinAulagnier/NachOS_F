@@ -358,7 +358,7 @@ FileSystem::CreateDir(const char * name)
 	}
 
 	if (success && directory->Find(name) != -1) {
-       printf("Ce fichier exite déja\n");
+       printf("Ce dossier exite déja\n");
 		success = false;
     }
 

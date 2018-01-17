@@ -38,6 +38,12 @@ class AddrSpace
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
+
+    /* Ajouté :
+     * Booléen représentant l'était de l'espace d'adressage
+     */
+	bool validSpace;
+
     /* Ajouté :
      * Entier représentant le pid de celui qui doit detruire l'espace d'adressage
      */

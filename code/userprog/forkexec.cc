@@ -24,8 +24,8 @@ int do_ForkExec (char *s)
     // Creation d'un nouvel espace d'adressage
     space = new AddrSpace (executable);
 
-    if(space == NULL){
-        printf("Impossible de créer un nouveau processus\n");
+    if(space == NULL || space->validSpace == false){
+        printf("\nImpossible de créer un nouveau processus : Mémoire insuffisante\n");
         return -1;
     }
     

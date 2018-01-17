@@ -56,6 +56,9 @@ class FileHeader {
 
     void Print();			// Print the contents of the file.
 
+    /*
+        Renvoie vrai si le FileHeader représente un répertoire.
+    */
 	bool estRepertoire();
   private:
     int numBytes;			// Number of bytes in the file /// Négatif pour un dossier !!!
