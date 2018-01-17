@@ -158,7 +158,7 @@ bool Transport::receive(int from, void* content){
         if (i == 0) {
             /* Reception taille fichier */
             postOffice->Receive(1, &pktHdr, &mailHdr, buffer);
-            while (mailHdr.ack == 1) {
+            while (mailHdr.ack == 1){
                 postOffice->Receive(1, &pktHdr, &mailHdr, buffer);
             }
             
