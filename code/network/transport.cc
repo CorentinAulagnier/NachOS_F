@@ -201,7 +201,7 @@ bool sendingAckLoop(PacketHeader outPktHdr, MailHeader outMailHdr, bool lastAck)
     postOffice->Send(outPktHdr, outMailHdr, "");
 
     int reemission = MAXREEMISSIONS;
-    if (lastAck) reemission = (int)reemission/4;
+    if (lastAck) reemission = (int)reemission/2;
     
     for (int i = 1; i < reemission; i++) {
 
