@@ -13,7 +13,7 @@ echo PARTIE 2
 echo ------------------------------
 echo ------------------------------
 read touch
-./nachos-userprog -x testPartie2
+./nachos-userprog -rs -x testPartie2
 
 
 #################################################################
@@ -24,7 +24,7 @@ echo PARTIE 3
 echo ------------------------------
 echo ------------------------------
 read touch
-./nachos-userprog -x testPartie3
+./nachos-userprog -rs -x testPartie3
 
 echo ------------------------------
 echo ------------------------------
@@ -32,7 +32,7 @@ echo PARTIE 3 Philosophes
 echo ------------------------------
 echo ------------------------------
 read touch
-./nachos-userprog -x testPartie3Philosophes
+./nachos-userprog -rs -x testPartie3Philosophes
 
 echo ------------------------------
 echo ------------------------------
@@ -40,7 +40,7 @@ echo PARTIE 3 Producteur Consommateur
 echo ------------------------------
 echo ------------------------------
 read touch
-./nachos-userprog -x testPartie3ProducerConsumer
+./nachos-userprog -rs -x testPartie3ProducerConsumer
 
 
 #################################################################
@@ -51,7 +51,7 @@ echo PARTIE 4
 echo ------------------------------
 echo ------------------------------
 read touch
-./nachos-userprog -x testPartie4
+./nachos-userprog -rs -x testPartie4
 
 echo ------------------------------
 echo ------------------------------
@@ -59,15 +59,15 @@ echo PARTIE 4 Tentative de creation de trop de processus
 echo ------------------------------
 echo ------------------------------
 read touch
-./nachos-userprog -x test_toomuchproc
+./nachos-userprog -rs -x test_toomuchproc
 
 echo ------------------------------
 echo ------------------------------
-echo PARTIE 4 Producteur Consommateur & Philosophes
+echo PARTIE 4 Producteur Consommateur et  Philosophes
 echo ------------------------------
 echo ------------------------------
 read touch
-./nachos-userprog -x test_prodphilo
+./nachos-userprog -rs -x test_prodphilo
 
 
 #################################################################
